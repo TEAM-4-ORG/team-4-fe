@@ -1,9 +1,6 @@
-import React, { useCallback, useState } from "react";
-import classNames from "classnames/bind";
-import styles from "./showDays.module.css";
-import Logic from "../../logic/logic";
-import Data from "../../data/data";
-const cx = classNames.bind(styles);
+import React, { useCallback, useState } from 'react';
+import Logic from '../../logic/logic';
+import Data from '../../data/data';
 
 const ShowDays = () => {
   const today = {
@@ -12,7 +9,7 @@ const ShowDays = () => {
     date: new Date().getDate(), //오늘 날짜
     day: new Date().getDay(), //오늘 요일
   };
-  const week = ["일", "월", "화", "수", "목", "금", "토"]; //일주일
+  const week = ['일', '월', '화', '수', '목', '금', '토']; //일주일
   const [selectedYear, setSelectedYear] = useState(today.year); //현재 선택된 연도
   const [selectedMonth, setSelectedMonth] = useState(today.month); //현재 선택된 달
   const dateTotalCount = new Date(selectedYear, selectedMonth, 0).getDate(); //선택된 연도, 달의 마지막 날짜
@@ -51,10 +48,7 @@ const ShowDays = () => {
       );
     }
     return (
-      <select
-        onChange={changeSelectMonth}
-        value={selectedMonth}
-      >
+      <select onChange={changeSelectMonth} value={selectedMonth}>
         {monthArr}
       </select>
     );
@@ -73,11 +67,7 @@ const ShowDays = () => {
       );
     }
     return (
-      <select
-        // className="yearSelect"
-        onChange={changeSelectYear}
-        value={selectedYear}
-      >
+      <select onChange={changeSelectYear} value={selectedYear}>
         {yearArr}
       </select>
     );
@@ -97,11 +87,9 @@ const ShowDays = () => {
       weekArr.push(
         <div
           key={v}
-          className={cx(
-            { weekday: true },
-            { sunday: v === "일" },
-            { saturday: v === "토" }
-          )}
+          className={`w-1/7 text-center ${
+            v === '일' ? 'text-red-500' : v === '토' ? 'text-blue-500' : ''
+          }`}
         >
           {v}
         </div>
@@ -116,57 +104,58 @@ const ShowDays = () => {
 
     for (const nowDay of week) {
       const day = new Date(selectedYear, selectedMonth - 1, 1).getDay();
-      const daySky = logic.returnDaySky(selectedYear,selectedMonth-1,1).name;
-      const dayGround = logic.returnDayGround(selectedYear,selectedMonth-1,1).name;
+      const daySky = logic.returnDaySky(
+        selectedYear,
+        selectedMonth - 1,
+        1
+      ).name;
+      const dayGround = logic.returnDayGround(
+        selectedYear,
+        selectedMonth - 1,
+        1
+      ).name;
 
-      const skyNum = data.sky.findIndex(i=>i.name==daySky);
-      const groundNum = data.ground.findIndex(i=>i.name==dayGround);
-
-      
+      const skyNum = data.sky.findIndex((i) => i.name == daySky);
+      const groundNum = data.ground.findIndex((i) => i.name == dayGround);
 
       if (week[day] === nowDay) {
         for (let i = 0; i < dateTotalCount; i++) {
+          const isToday =
+            today.year === selectedYear &&
+            today.month === selectedMonth &&
+            today.date === i + 1;
+          const isSunday =
+            new Date(selectedYear, selectedMonth - 1, i + 1).getDay() === 0;
+          const isSaturday =
+            new Date(selectedYear, selectedMonth - 1, i + 1).getDay() === 6;
+
           dayArr.push(
             <div
               key={i + 1}
-              className={cx(
-                {
-                  //오늘 날짜일 때 표시할 스타일 클라스네임
-                  today:
-                    today.year === selectedYear &&
-                    today.month === selectedMonth &&
-                    today.date === i + 1,
-                },
-                { weekday: true }, //전체 날짜 스타일
-                {
-                  //전체 일요일 스타일
-                  sunday:
-                    new Date(
-                      selectedYear,
-                      selectedMonth - 1,
-                      i + 1
-                    ).getDay() === 0,
-                },
-                {
-                  //전체 토요일 스타일
-                  saturday:
-                    new Date(
-                      selectedYear,
-                      selectedMonth - 1,
-                      i + 1
-                    ).getDay() === 6,
-                }
-              )}
-
-            > 
-              {i + 1}<br></br>
-            {data.sky[i+skyNum<10?i+skyNum:(i+skyNum)%10].code}
-            {data.ground[i+groundNum<12?i+groundNum:(i+groundNum)%12].code}일
+              className={`float-left w-1/7 pb-2.5 text-center text-base ${
+                isToday
+                  ? 'rounded-full bg-[rgb(88,111,187)] font-bold text-white'
+                  : isSunday
+                    ? 'text-red-500'
+                    : isSaturday
+                      ? 'text-blue-500'
+                      : ''
+              }`}
+            >
+              {i + 1}
+              <br />
+              {data.sky[i + skyNum < 10 ? i + skyNum : (i + skyNum) % 10].code}
+              {
+                data.ground[
+                  i + groundNum < 12 ? i + groundNum : (i + groundNum) % 12
+                ].code
+              }
+              일
             </div>
           );
         }
       } else {
-        dayArr.push(<div className={styles.weekday}></div>);
+        dayArr.push(<div className='w-1/7'></div>);
       }
     }
 
@@ -174,18 +163,28 @@ const ShowDays = () => {
   }, [selectedYear, selectedMonth, dateTotalCount]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.title}>
+    <div className='container'>
+      <div className='flex'>
         <h3>
           {yearControl()}년 {monthControl()}월
         </h3>
-        <div className={styles.pagination}>
-          <button className={styles.button} onClick={prevMonth}>◀︎</button>
-          <button className={styles.button} onClick={nextMonth}>▶︎</button>
+        <div className='ml-auto self-center'>
+          <button
+            className='border border-[var(--color-unselected)] bg-transparent'
+            onClick={prevMonth}
+          >
+            ◀︎
+          </button>
+          <button
+            className='border border-[var(--color-unselected)] bg-transparent'
+            onClick={nextMonth}
+          >
+            ▶︎
+          </button>
         </div>
       </div>
-      <div className={styles.week}>{returnWeek()}</div>
-      <div className={styles.date}>{returnDay()}</div>
+      <div className='flex'>{returnWeek()}</div>
+      <div className='mt-5'>{returnDay()}</div>
     </div>
   );
 };

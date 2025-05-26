@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './cal_five_elements.module.css';
 
 const CalFiveElements = (props) => {
   let tree = {
@@ -51,7 +50,7 @@ const CalFiveElements = (props) => {
       }
     }
     return (
-      <div className={styles.result}>
+      <div className='flex flex-row flex-nowrap'>
         <p>목: {tree.count}</p>
         <p>화: {fire.count}</p>
         <p>토: {earth.count}</p>
@@ -71,7 +70,7 @@ const CalFiveElements = (props) => {
 
         calResult.push(
           <span
-            className={styles.showElements}
+            className='inline-block h-[20px] w-[30px]'
             key={forkey}
             id={fiveElements[j].color}
           ></span>
@@ -87,13 +86,13 @@ const CalFiveElements = (props) => {
     gold.count = 0;
     water.count = 0;
 
-    return <div className={styles.elementsContainer}>{calResult}</div>;
+    return <div className='w-full'>{calResult}</div>;
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.textResult}>{returnFiveElementsResult()}</div>
-      <div className={styles.tableResult}>{returnFiveElementsTable()}</div>
+    <div className='[&>*]:m-0 [&>*]:p-0'>
+      <div className='text-result'>{returnFiveElementsResult()}</div>
+      <div className='table-result'>{returnFiveElementsTable()}</div>
     </div>
   );
 };

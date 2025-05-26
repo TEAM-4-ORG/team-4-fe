@@ -1,30 +1,36 @@
-import React from 'react'
+import React from 'react';
 import CalTimesLogic from '../../analysis_logic/cal_times_logic';
-import styles from './get_decades_number.module.css'
 
 const GetDecadesNumberR = (props) => {
+  const cal_times_logic = new CalTimesLogic();
 
+  const selectedYear = props.selectedYear;
+  const selectedMonth =
+    props.selectedMonth + 1 < 12 ? props.selectedMonth + 1 : 0;
+  const selectedDay = Number(props.selectedDay);
 
-    const cal_times_logic = new CalTimesLogic();
+  const monthIndex = props.monthIndex;
 
-    const selectedYear = props.selectedYear;
-    const selectedMonth = props.selectedMonth+1<12?props.selectedMonth+1:0;
-    const selectedDay = Number(props.selectedDay);
+  const order = props.order;
+  const dateTotalCount = new Date(
+    selectedYear,
+    selectedMonth - 1 < 0 ? 11 : selectedMonth - 1,
+    0
+  ).getDate();
 
-    const monthIndex = props.monthIndex;
-
-    const order= props.order;
-    const dateTotalCount = new Date(selectedYear, selectedMonth-1<0?11:selectedMonth-1, 0).getDate();
-
-  
   return (
     <>
+      <div className='m-0 text-base'>
+        {cal_times_logic.decadesNumR(
+          selectedMonth,
+          selectedDay,
+          monthIndex,
+          dateTotalCount
+        ) +
+          order * 10}
+      </div>
+    </>
+  );
+};
 
-   <div className={styles.h1}>
-    {cal_times_logic.decadesNumR(selectedMonth, selectedDay, monthIndex, dateTotalCount)+(order*10)}
-   </div>
-   </>
-  )
-}
-
-export default GetDecadesNumberR
+export default GetDecadesNumberR;

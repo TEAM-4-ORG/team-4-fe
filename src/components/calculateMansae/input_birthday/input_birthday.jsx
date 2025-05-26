@@ -1,22 +1,18 @@
-import React, { useRef, useState, useCallback } from 'react'
-import styles from './input_birthday.module.css'
-
+import React, { useRef, useState, useCallback } from 'react';
 
 const InputBirthday = (props) => {
-
-
   const today = {
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
-    date: new Date().getDate()
-  }
+    date: new Date().getDate(),
+  };
 
   const [selectedYear, setSelectedYear] = useState();
   const [selectedMonth, setSelectedMonth] = useState();
   const [selectedDay, setSelectedDay] = useState();
   const dateTotalCount = new Date(2022, 8, 0).getDate();
-  const [selectedGender,setSelectedGender] =useState();
-  const [selectedAmPm,setSelectedAmPm] =useState();
+  const [selectedGender, setSelectedGender] = useState();
+  const [selectedAmPm, setSelectedAmPm] = useState();
 
   const inputGender = useRef();
   const inputYear = useRef();
@@ -26,8 +22,6 @@ const InputBirthday = (props) => {
   const inputHour = useRef();
   const inputMinutes = useRef();
 
-  
-
   const yearControl = useCallback(() => {
     let yearArr = [];
     const startYear = today.year - 90;
@@ -35,16 +29,15 @@ const InputBirthday = (props) => {
 
     for (let i = endYear; i > startYear; i--) {
       yearArr.push(
-        <option
-          key={i} value={i}
-        >
+        <option key={i} value={i}>
           {i}년
         </option>
-      )
+      );
     }
 
     return (
-      <select className={styles.yearSelect}
+      <select
+        className='flex-grow'
         onChange={function (e) {
           setSelectedYear(Number(e.target.value));
         }}
@@ -53,68 +46,52 @@ const InputBirthday = (props) => {
         {yearArr}
       </select>
     );
-
-  }, [selectedYear])
-
+  }, [selectedYear]);
 
   const monthControl = useCallback(() => {
     let monthArr = [];
     for (let i = 0; i < 12; i++) {
       monthArr.push(
-        <option
-          key={i + 1}
-          value={i + 1}
-        >
+        <option key={i + 1} value={i + 1}>
           {i + 1}월
         </option>
-      )
+      );
     }
 
     return (
-
       <select
+        className='flex-grow'
         onChange={function (e) {
           setSelectedMonth(Number(e.target.value));
         }}
         ref={inputMonth}
 
-      // value={selectedMonth}
+        // value={selectedMonth}
       >
         {monthArr}
         {console.log(selectedMonth)};
       </select>
-    )
-
-  }, [selectedMonth])
-
+    );
+  }, [selectedMonth]);
 
   const dayControl = useCallback(() => {
     let dayArr = [];
 
     for (let i = 0; i < dateTotalCount; i++) {
       dayArr.push(
-        <option
-          key={i + 1}
-          value={i + 1}
-        >
-
+        <option key={i + 1} value={i + 1}>
           {i + 1}일
         </option>
-      )
+      );
     }
     return (
-      <select
-        // value={selectedDay}
-        ref={inputDay}
-
-      >
+      <select className='flex-grow' ref={inputDay}>
         {dayArr}
       </select>
-    )
+    );
+  }, [selectedYear, selectedMonth, dateTotalCount]);
 
-  }, [selectedYear, selectedMonth, dateTotalCount])
-
-  const onSubmit = event => {
+  const onSubmit = (event) => {
     event.preventDefault();
 
     const checkAmPm = inputAmPm.current.value;
@@ -127,42 +104,36 @@ const InputBirthday = (props) => {
     const checkMinutes = Number(tranMinutes);
     const checkGender = inputGender.current.value;
 
-    if(checkGender==undefined){
+    if (checkGender == undefined) {
       return alert('남성인가요? 여성인가요?');
     }
 
-    if(checkAmPm==undefined){
+    if (checkAmPm == undefined) {
       return alert('오전인가요? 오후인가요?');
     }
 
-
-    let calHour = "";
-    if (checkAmPm == "오전") {
-      if(checkHour<10){
-        calHour = "0" + checkHour.toString();
-      //09,08 시스템으로 만듦
-      }else{
+    let calHour = '';
+    if (checkAmPm == '오전') {
+      if (checkHour < 10) {
+        calHour = '0' + checkHour.toString();
+        //09,08 시스템으로 만듦
+      } else {
         calHour = checkHour.toString();
       }
-
-    } else if(checkAmPm == "오후"){
-      checkHour += 12
+    } else if (checkAmPm == '오후') {
+      checkHour += 12;
       //오후일때만 12를 더해서 24시간 시스템으로 만듦
       calHour = checkHour.toString();
-    } 
+    }
 
-
-    let calMin = "";
+    let calMin = '';
     if (checkMinutes < 10) {
-      calMin = "0" + checkMinutes.toString();
+      calMin = '0' + checkMinutes.toString();
     } else {
       calMin = checkMinutes.toString();
     }
 
-
-
-
-    const time = calHour + ":" + calMin;
+    const time = calHour + ':' + calMin;
     const day = inputDay.current.value;
     const month = inputMonth.current.value;
     const year = inputYear.current.value;
@@ -171,85 +142,100 @@ const InputBirthday = (props) => {
 
     const gender = inputGender.current.value;
 
-    console.log(inputGender.current.value + "젠더 ");
+    console.log(inputGender.current.value + '젠더 ');
     time && props.onAdd(year, month, day, time, gender);
 
-    window.scrollTo(0,0);
-
-  }
+    window.scrollTo(0, 0);
+  };
 
   const selectWoman = () => {
-    inputGender.current.value = "여자"
+    inputGender.current.value = '여자';
     console.log(inputGender.current.value);
     setSelectedGender(inputGender.current.value);
-  }
+  };
   const selectMan = () => {
-    inputGender.current.value = "남자"
+    inputGender.current.value = '남자';
     console.log(inputGender.current.value);
     setSelectedGender(inputGender.current.value);
-
-  }
+  };
 
   const selectAm = () => {
-    inputAmPm.current.value = "오전"
+    inputAmPm.current.value = '오전';
     console.log(inputAmPm.current.value);
     setSelectedAmPm(inputAmPm.current.value);
-    
-  }
+  };
   const selectPm = () => {
-    inputAmPm.current.value = "오후"
+    inputAmPm.current.value = '오후';
     console.log(inputAmPm.current.value);
     setSelectedAmPm(inputAmPm.current.value);
-  }
-
+  };
 
   return (
-    <div className={styles.container}>
-
-      <form className={styles.form} action="" onSubmit={onSubmit}>
-        <div className={styles.genderSelect} ref={inputGender}>
-          <input type="button" onClick={selectMan}
-            value="남자" className={selectedGender=="남자"?styles.checked:""} 
-            />
-          <input type="button" onClick={selectWoman}
-            value="여자" className={selectedGender=="여자"?styles.checked:""}  />
+    <div className='relative mx-auto my-8 flex w-[87%] flex-row justify-center bg-white p-5 pt-2.5 text-4xl shadow-lg sm:text-base md:text-4xl'>
+      <form className='w-full p-0 text-gray-700' action='' onSubmit={onSubmit}>
+        <div className='flex items-center' ref={inputGender}>
+          <input
+            type='button'
+            onClick={selectMan}
+            value='남자'
+            className={`flex-grow ${selectedGender === '남자' ? 'border-main text-main' : 'border-gray-300 text-gray-500'} rounded border px-4 py-2`}
+          />
+          <input
+            type='button'
+            onClick={selectWoman}
+            value='여자'
+            className={`flex-grow ${selectedGender === '여자' ? 'border-main text-main' : 'border-gray-300 text-gray-500'} rounded border px-4 py-2`}
+          />
         </div>
-        <div className={styles.dateSelect}>
-          <span>
-            {yearControl()}년
-          </span>
-          <span>
-            {monthControl()}월
-          </span>
-          <span>
-            {dayControl()}일
-          </span>
-          </div>
-
-
-          <div className={styles.selectAmPm} ref={inputAmPm}>
-            <input type="button" onClick={selectAm}
-              value="오전" 
-              className={selectedAmPm=="오전"?styles.checked:""}
-              />
-            <input type="button" onClick={selectPm}
-              value="오후" 
-              className={selectedAmPm=="오후"?styles.checked:""}
-              />
-          </div>
-        
-        <div className={styles.timeInput}>
-          <input type="number" ref={inputHour} max="11" min="00" placeholder='00' />시
-          <input type="number" ref={inputMinutes} max="59" min="00" placeholder='00' />분
+        <div className='flex items-center pt-5'>
+          <span>{yearControl()}년</span>
+          <span>{monthControl()}월</span>
+          <span>{dayControl()}일</span>
         </div>
-        <div className={styles.toSubmit}>
-<button className={styles.button}>제출</button>
 
+        <div className='flex items-center' ref={inputAmPm}>
+          <input
+            type='button'
+            onClick={selectAm}
+            value='오전'
+            className={`flex-grow ${selectedAmPm === '오전' ? 'border-main text-main' : 'border-gray-300 text-gray-500'} rounded border px-4 py-2`}
+          />
+          <input
+            type='button'
+            onClick={selectPm}
+            value='오후'
+            className={`flex-grow ${selectedAmPm === '오후' ? 'border-main text-main' : 'border-gray-300 text-gray-500'} rounded border px-4 py-2`}
+          />
         </div>
-        
+
+        <div className='flex items-center pt-5'>
+          <input
+            type='number'
+            ref={inputHour}
+            max='11'
+            min='00'
+            placeholder='00'
+            className='w-20 rounded border border-gray-300 px-2 py-1'
+          />
+          시
+          <input
+            type='number'
+            ref={inputMinutes}
+            max='59'
+            min='00'
+            placeholder='00'
+            className='w-20 rounded border border-gray-300 px-2 py-1'
+          />
+          분
+        </div>
+        <div className='flex justify-center pt-5'>
+          <button className='rounded border border-gray-300 bg-white px-6 py-2 font-semibold text-gray-500 transition-colors hover:bg-gray-50'>
+            제출
+          </button>
+        </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default InputBirthday
+export default InputBirthday;

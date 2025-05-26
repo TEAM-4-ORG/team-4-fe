@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import Logic from '../logic/logic';
-import styles from './four_pillar_viewer.module.css';
 import CalculateFamily from '../logic/calculate_family';
 import { useState } from 'react';
 import ShowHop from './result_detail/showHop';
@@ -9,6 +8,22 @@ import CalculateInnerAttri from '../logic/calculate_innerAttri';
 import ShowPlusMinus from './result_detail/showPlusMinus';
 import ShowChung from './result_detail/showChung';
 
+export const bgColorMap = {
+  green: 'bg-green-500',
+  red: 'bg-red-500',
+  yellow: 'bg-yellow-400',
+  white: 'bg-gray-300',
+  black: 'bg-gray-800',
+};
+
+export const textColorMap = {
+  green: 'text-green-500',
+  red: 'text-red-500',
+  yellow: 'text-yellow-400',
+  white: 'text-gray-300',
+  black: 'text-gray-800',
+};
+
 const FourPillarViewer = (props) => {
   const logic = new Logic();
   const data = new Data();
@@ -16,15 +31,8 @@ const FourPillarViewer = (props) => {
   const selectedYear = props.selectedYear;
   const selectedMonth = props.selectedMonth;
   const selectedDay = props.selectedDay;
-  // const selectedTime = "09:50"
+
   const selectedTime = props.selectedTime;
-
-  // const show = parseInt(props.selectedMonth);
-
-  // const selectedYear = 2022;
-  // const selectedMonth =8;
-  // const selectedDay = 21;
-  // const selectedTime = "09:50";
 
   const yearSky = logic.returnYearSky(selectedYear, selectedMonth, selectedDay);
   const yearGround = logic.returnYearGround(
@@ -67,229 +75,158 @@ const FourPillarViewer = (props) => {
     }
   };
 
+  useEffect(() => {
+    console.log(timeSky);
+  }, [timeSky]);
+
   return (
-    <div className={styles.container}>
-      {/* <div className={styles.showDetail}>
-                <div className={styles.toggleSwitch} id={detailKey == 0 ? "" : "toggledSwitch"}>
-                    <span className={styles.toggleButton} onClick={showDetail}
-                        id={detailKey == 0 ? "" : "toggledButton"}></span>
-                </div>
-            </div> */}
-      <table>
-        <th>시</th>
-        <th>일</th>
-        <th>월</th>
-        <th>연</th>
-        <tr>
-          <td>
-            <CalculateFamily daySky={daySky} sky={timeSky}></CalculateFamily>
-          </td>
-          <td>아신</td>
-          <td>
-            <CalculateFamily daySky={daySky} sky={monthSky}></CalculateFamily>
-          </td>
-          <td>
-            <CalculateFamily daySky={daySky} sky={yearSky}></CalculateFamily>
-          </td>
-        </tr>
+    <div className='mt-[150px] w-[87%] bg-white shadow-lg'>
+      <table className='w-full'>
+        <thead>
+          <tr>
+            <th>시</th>
+            <th>일</th>
+            <th>월</th>
+            <th>연</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <CalculateFamily daySky={daySky} sky={timeSky}></CalculateFamily>
+            </td>
+            <td>아신</td>
+            <td>
+              <CalculateFamily daySky={daySky} sky={monthSky}></CalculateFamily>
+            </td>
+            <td>
+              <CalculateFamily daySky={daySky} sky={yearSky}></CalculateFamily>
+            </td>
+          </tr>
 
-        <tr className={styles.sky}>
-          <td>
-            {' '}
-            <span
-              className={`${styles.element} ${styles.sky}`}
-              id={timeSky.color}
-            >
-              {timeSky.code}
-            </span>
-          </td>
-          <td>
-            <span
-              className={`${styles.element} ${styles.sky}`}
-              id={daySky.color}
-            >
-              {daySky.code}
-            </span>
-          </td>
-          <td>
-            <span
-              className={`${styles.element} ${styles.sky}`}
-              id={monthSky.color}
-            >
-              {monthSky.code}
-            </span>
-          </td>
-          <td>
-            <span
-              className={`${styles.element} ${styles.sky}`}
-              id={yearSky.color}
-            >
-              {yearSky.code}
-            </span>
-          </td>
-        </tr>
+          <tr className='text-[3.5rem]'>
+            <td className={bgColorMap[timeSky.color]}>
+              <span>{timeSky.code}</span>
+            </td>
+            <td className={bgColorMap[daySky.color]}>
+              <span>{daySky.code}</span>
+            </td>
+            <td className={bgColorMap[monthSky.color]}>
+              <span>{monthSky.code}</span>
+            </td>
+            <td className={bgColorMap[yearSky.color]}>
+              <span>{yearSky.code}</span>
+            </td>
+          </tr>
 
-        <tr className={styles.ground}>
-          <td>
-            <span
-              className={`${styles.element} ${styles.ground}`}
-              id={timeGround.color}
-            >
-              {timeGround.code}
-            </span>
-          </td>
-          <td>
-            <span
-              className={`${styles.element} ${styles.ground}`}
-              id={dayGround.color}
-            >
-              {dayGround.code}
-            </span>
-          </td>
-          <td>
-            {' '}
-            <span
-              className={`${styles.element} ${styles.ground}`}
-              id={monthGround.color}
-            >
-              {monthGround.code}
-            </span>
-          </td>
-          <td>
-            {' '}
-            <span
-              className={`${styles.element} ${styles.ground}`}
-              id={yearGround.color}
-            >
-              {yearGround.code}
-            </span>
-          </td>
-        </tr>
+          <tr className='text-[3.5rem]'>
+            <td className={bgColorMap[timeGround.color]}>
+              <span>{timeGround.code}</span>
+            </td>
+            <td className={bgColorMap[dayGround.color]}>
+              <span>{dayGround.code}</span>
+            </td>
+            <td className={bgColorMap[monthGround.color]}>
+              <span>{monthGround.code}</span>
+            </td>
+            <td className={bgColorMap[yearGround.color]}>
+              <span>{yearGround.code}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span>
+                <CalculateInnerAttri ground={timeGround} daySky={daySky} />
+              </span>
+            </td>
+            <td>
+              <span>
+                <CalculateInnerAttri ground={dayGround} daySky={daySky} />
+              </span>
+            </td>
+            <td>
+              <span>
+                <CalculateInnerAttri ground={monthGround} daySky={daySky} />
+              </span>
+            </td>
+            <td>
+              {' '}
+              <span>
+                <CalculateInnerAttri ground={yearGround} daySky={daySky} />
+              </span>
+            </td>
+          </tr>
 
-        <tr>
-          <td>
-            {' '}
-            <span className={styles.innerAttri}>
-              <CalculateInnerAttri
-                ground={timeGround}
-                daySky={daySky}
-              ></CalculateInnerAttri>
-            </span>
-          </td>
-          <td>
-            {' '}
-            <span className={styles.innerAttri}>
-              <CalculateInnerAttri
-                ground={dayGround}
-                daySky={daySky}
-              ></CalculateInnerAttri>
-            </span>
-          </td>
-          <td>
-            {' '}
-            <span className={styles.innerAttri}>
-              <CalculateInnerAttri
-                ground={monthGround}
-                daySky={daySky}
-              ></CalculateInnerAttri>
-            </span>
-          </td>
-          <td>
-            {' '}
-            <span className={styles.innerAttri}>
-              <CalculateInnerAttri
-                ground={yearGround}
-                daySky={daySky}
-              ></CalculateInnerAttri>
-            </span>
-          </td>
-        </tr>
+          <tr>
+            <td>
+              <span>
+                <CalculateFamily daySky={daySky} ground={timeGround} />
+              </span>
+            </td>
+            <td>
+              <span>
+                <CalculateFamily daySky={daySky} ground={dayGround} />
+              </span>
+            </td>
+            <td>
+              <span>
+                <CalculateFamily daySky={daySky} ground={monthGround} />
+              </span>
+            </td>
+            <td>
+              <span>
+                <CalculateFamily daySky={daySky} ground={yearGround} />
+              </span>
+            </td>
+          </tr>
 
-        <tr>
-          <td>
-            <span>
-              <CalculateFamily
+          <tr>
+            <td>
+              <span>
+                <ShowPlusMinus sky={timeSky} ground={timeGround} />
+              </span>
+            </td>
+            <td>
+              <span>
+                <ShowPlusMinus sky={daySky} ground={dayGround} />
+              </span>
+            </td>
+            <td>
+              <span>
+                <ShowPlusMinus sky={monthSky} ground={monthGround} />
+              </span>
+            </td>
+            <td>
+              <span>
+                <ShowPlusMinus sky={yearSky} ground={yearGround} />
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan='4'>
+              <ShowHop
+                yearSky={yearSky}
+                monthSky={monthSky}
                 daySky={daySky}
-                ground={timeGround}
-              ></CalculateFamily>
-            </span>
-          </td>
-          <td>
-            <span>
-              <CalculateFamily
+                timeSky={timeSky}
+                yearGround={yearGround}
+                monthGround={monthGround}
+                dayGround={dayGround}
+                timeGround={timeGround}
+              />
+              <ShowChung
+                yearSky={yearSky}
+                monthSky={monthSky}
                 daySky={daySky}
-                ground={dayGround}
-              ></CalculateFamily>
-            </span>
-          </td>
-          <td>
-            <span>
-              <CalculateFamily
-                daySky={daySky}
-                ground={monthGround}
-              ></CalculateFamily>
-            </span>
-          </td>
-          <td>
-            <span>
-              <CalculateFamily
-                daySky={daySky}
-                ground={yearGround}
-              ></CalculateFamily>
-            </span>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <span>
-              <ShowPlusMinus sky={timeSky} ground={timeGround}></ShowPlusMinus>
-            </span>
-          </td>
-          <td>
-            <span>
-              <ShowPlusMinus sky={daySky} ground={dayGround}></ShowPlusMinus>
-            </span>
-          </td>
-          <td>
-            <span>
-              <ShowPlusMinus
-                sky={monthSky}
-                ground={monthGround}
-              ></ShowPlusMinus>
-            </span>
-          </td>
-          <td>
-            <span>
-              <ShowPlusMinus sky={yearSky} ground={yearGround}></ShowPlusMinus>
-            </span>
-          </td>
-        </tr>
-        <tr>
-          <td colspan='4'>
-            <ShowHop
-              yearSky={yearSky}
-              monthSky={monthSky}
-              daySky={daySky}
-              timeSky={timeSky}
-              yearGround={yearGround}
-              monthGround={monthGround}
-              dayGround={dayGround}
-              timeGround={timeGround}
-            ></ShowHop>
-
-            <ShowChung
-              yearSky={yearSky}
-              monthSky={monthSky}
-              daySky={daySky}
-              timeSky={timeSky}
-              yearGround={yearGround}
-              monthGround={monthGround}
-              dayGround={dayGround}
-              timeGround={timeGround}
-            ></ShowChung>
-          </td>
-        </tr>
+                timeSky={timeSky}
+                yearGround={yearGround}
+                monthGround={monthGround}
+                dayGround={dayGround}
+                timeGround={timeGround}
+              />
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   );
