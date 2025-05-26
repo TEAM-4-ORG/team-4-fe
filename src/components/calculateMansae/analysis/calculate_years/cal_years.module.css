@@ -1,0 +1,43 @@
+.container{
+    display: flex;
+    flex-flow: row-reverse;
+    /* flex-direction: ; */
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+}
+
+
+@media(min-width:700px){
+
+
+    .container::-webkit-scrollbar{
+   
+    }
+    
+    .container::-webkit-scrollbar-thumb{
+   
+    }
+    
+    .container::-webkit-scrollbar-track {
+    }
+    
+
+}
+
+/* ::-webkit-scrollbar {
+    display: none;
+    } */
+
+.pillar{
+display: flex;
+flex-direction: column;
+}
+
+.pillar .span{
+    text-align: center;
+    width: 100%;
+}
+
+.years{
+    font-size: .5rem;
+}

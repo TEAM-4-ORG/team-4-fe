@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
+.container{
+  width:87%;
+margin-top:150px;
+  /* position: relative;
+    margin: 20px auto 0 auto;
+    box-shadow: 9px 5px 45px -26px rgba(0,0,0,0.75); */
+    box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.75);
+background-color: white;
+}
+
+/* .container *{
+    border:1px solid black;
+} */
+
+@media(max-width:750px){
+  .container{
+  }
+ }
+
+*{
+    /* color:pink; */
+}
+
+
+.element{
+  width:100%;
+  
+}
+
+.toggleSwitch {
+    width: 4rem;
+    margin: 1rem;
+    height: 1rem;
+    display: block;
+    position: relative;
+    border-radius: 2rem;
+    background-color: #fff;
+    box-shadow: 0 0 1rem 3px rgba(0 0 0 / 15%);
+    cursor: pointer;
+  }
+  
+  .toggleSwitch .toggleButton {
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+    top: 50%;
+    left: .2rem;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: slategray;
+  }
+  
+
+      /* 체크박스가 체크되면 변경 이벤트 */
+  
+  
+
+  .toggleSwitch, .toggleButton {
+    transition: all 0.2s ease-in;
+  }
+
+ .showDetail{
+    font-size: .5rem;
+    display: flex;
+    justify-content: flex-end;
+ }
+
+
+ table{
+    border-collapse: collapse;
+    border:.2px solid rgba(112,128,144,0.4);
+    margin:0 auto;
+    width: 100%;
+}
+ th,td{
+    border:.2px solid rgba(112,128,144,0.4);
+    text-align: center;
+ }
+
+ tr:nth-child() td{
+    font-size: 2rem;
+ }
+
+.element{
+    font-size: 3.5rem;
+  }

@@ -1,0 +1,31 @@
+.container *{
+    padding: 0;
+    margin: 0;
+}
+
+.container{
+    
+}
+
+.result{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+
+
+p{
+    font-size: 1rem;
+    padding-right: 5px;
+}
+
+.elementsContainer{
+    width:100%;
+}
+
+.showElements{
+    display: inline-block;
+    width:30px;
+    height:20px;
+}

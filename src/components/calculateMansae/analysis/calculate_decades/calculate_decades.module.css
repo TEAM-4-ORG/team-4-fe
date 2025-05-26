@@ -1,0 +1,47 @@
+.container{
+    display: flex;
+    flex-flow: row-reverse;
+    /* flex-direction: ; */
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    justify-content: flex-start;
+}
+
+
+
+
+@media(min-width:700px){
+
+
+    .container::-webkit-scrollbar{
+    }
+    
+    .container::-webkit-scrollbar-thumb{
+        background-color:slategray;
+           
+    }
+    
+    .container::-webkit-scrollbar-track {
+    }
+    
+
+}
+
+
+/* ::-webkit-scrollbar {
+    display: none;
+    } */
+
+.pillar{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.pillar .span{
+    border:1.5px solid rgba(112,128,144,0.4);
+    text-align: center;
+    margin:0;
+    width: 100%;
+}
+

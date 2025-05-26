@@ -1,0 +1,26 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    margin: 30px auto;
+    padding:0;
+    width:87%;
+    align-items: center;
+}
+
+.container *{
+    width: 100%;
+}
+
+.text{
+    font-size: 1.2rem;
+    margin-top:10px;
+    margin-bottom: 4px;
+    display: inline-block;
+}
+
+.explain{
+    font-size: .5rem;
+    display: inline-block;
+}
