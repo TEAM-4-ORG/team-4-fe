@@ -1,7 +1,6 @@
-button {
+/* button {
   cursor: pointer;
-}
-
+} */
 
 .container .title {
   display: flex;
@@ -31,8 +30,6 @@ button {
   text-align: center;
 }
 
-
-
 .container .week .sunday {
   color: red;
 }
@@ -46,7 +43,7 @@ button {
 }
 
 .container .date .weekday {
-  width: calc(100%/ 7);
+  width: calc(100% / 7);
   float: left;
   text-align: center;
   font-size: 1em;
