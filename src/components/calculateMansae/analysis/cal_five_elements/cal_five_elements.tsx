@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 import {
   SkyType,
   GroundType,
@@ -15,6 +16,7 @@ interface CalFiveElementsProps {
   timeSky: SkyType;
   timeGround: GroundType;
   onFiveElementsCalculated?: (data: FiveElementsResult) => void;
+  className?: string;
 }
 
 /**
@@ -87,7 +89,12 @@ const CalFiveElements: React.FC<CalFiveElementsProps> = (props) => {
   ]);
 
   return (
-    <div className='flex flex-row flex-nowrap gap-4 text-lg font-semibold'>
+    <div
+      className={cn(
+        'flex flex-row flex-nowrap gap-4 text-lg font-semibold',
+        props.className
+      )}
+    >
       <p>목: {elements.tree.count}</p>
       <p>화: {elements.fire.count}</p>
       <p>토: {elements.earth.count}</p>

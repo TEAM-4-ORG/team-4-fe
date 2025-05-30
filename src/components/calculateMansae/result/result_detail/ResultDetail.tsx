@@ -150,6 +150,7 @@ const ResultDetail: React.FC<ResultDetailProps> = (props) => {
         timeSky={props.timeSky}
         timeGround={props.timeGround}
         onFiveElementsCalculated={handleFiveElementsCalculated}
+        className='hidden'
       />
       <CalculateDecades
         selectedYear={props.selectedYear}

@@ -80,7 +80,7 @@ const FourPillarViewer = ({
   // };
 
   return (
-    <div className='mt-[150px] w-[87%] bg-white shadow-lg'>
+    <div className='w-[87%] bg-white shadow-lg'>
       <table className='w-full'>
         <thead>
           <tr>
