@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useEffect } from 'react';
 import CalFiveElements from './cal_five_elements/cal_five_elements';
 import CalculateDecades from './calculate_decades/calculate_decades';
 import Logic from '../logic/logic';
@@ -8,22 +7,13 @@ import CalMonths from './calculate_months/cal_months';
 import ShowDays from './show_days/showDays';
 
 const Analysis = (props) => {
-  const [selectedDecades, setSelectedDecades] = useState();
-
   const logic = new Logic();
 
   const selectedYear = props.selectedYear;
   const selectedMonth = props.selectedMonth;
   const selectedDay = props.selectedDay;
-  // const selectedTime = "09:50"
   const selectedTime = props.selectedTime;
   const selectedGender = props.selectedGender;
-  // const show = parseInt(props.selectedMonth);
-
-  // const selectedYear = 2022;
-  // const selectedMonth =8;
-  // const selectedDay = 21;
-  // const selectedTime = "09:50";
 
   const yearSky = logic.returnYearSky(selectedYear, selectedMonth, selectedDay);
   const yearGround = logic.returnYearGround(
@@ -54,6 +44,21 @@ const Analysis = (props) => {
   );
   const timeGround = logic.returnTimeGround(selectedTime);
 
+  useEffect(() => {
+    if (props.onAnalysisComplete) {
+      props.onAnalysisComplete({
+        yearSky,
+        yearGround,
+        monthSky,
+        monthGround,
+        daySky,
+        dayGround,
+        timeSky,
+        timeGround,
+      });
+    }
+  }, []);
+
   return (
     <div className='relative mx-auto my-[30px] flex w-[87%] flex-col items-center justify-center'>
       <div className='w-full'>
@@ -69,7 +74,7 @@ const Analysis = (props) => {
           dayGround={dayGround}
           timeSky={timeSky}
           timeGround={timeGround}
-        ></CalFiveElements>
+        />
         <div className='mt-[10px] mb-1 inline-block text-[1.2rem]'>대운</div>
         <CalculateDecades
           selectedYear={selectedYear}
@@ -84,23 +89,23 @@ const Analysis = (props) => {
           timeSky={timeSky}
           timeGround={timeGround}
           selectedGender={selectedGender}
-        ></CalculateDecades>
+        />
         <div className='inline-block text-[0.5rem]'>
           ↔양 옆으로 드래그하세요
         </div>
 
         <div className='mt-[10px] mb-1 inline-block text-[1.2rem]'>세운</div>
-        <CalYears></CalYears>
+        <CalYears />
         <div className='inline-block text-[0.5rem]'>
           ↔양 옆으로 드래그하세요
         </div>
 
         <div className='mt-[10px] mb-1 inline-block text-[1.2rem]'>월운</div>
-        <CalMonths></CalMonths>
+        <CalMonths />
         <div className='inline-block text-[0.5rem]'>
           ↔양 옆으로 드래그하세요
         </div>
-        <ShowDays></ShowDays>
+        <ShowDays />
       </div>
     </div>
   );

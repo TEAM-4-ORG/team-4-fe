@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Data from '../../data/data';
 import GetDecadesNumber from './get_decades_number/get_decades_number';
 import GetDecadesNumberR from './get_decades_number/get_decades_number_r';
@@ -29,6 +29,46 @@ const CalculateDecades = (props) => {
   let decadesSkyArr = [];
   let decadesGroundArr = [];
   let decadesResult = [];
+
+  const calculateDecades = () => {
+    decadesSkyArr = [];
+    decadesGroundArr = [];
+    decadesResult = [];
+
+    if (gender == '남자') {
+      if (yearSky.sign == '양') {
+        goStraight();
+      } else if (yearSky.sign == '음') {
+        gobackwards();
+      }
+    } else if (gender == '여자') {
+      if (yearSky.sign == '음') {
+        goStraight();
+      } else if (yearSky.sign == '양') {
+        gobackwards();
+      }
+    }
+
+    if (props.onDecadesCalculated) {
+      props.onDecadesCalculated({
+        decadesSky: decadesSkyArr,
+        decadesGround: decadesGroundArr,
+        decadesResult: decadesResult,
+      });
+    }
+  };
+
+  useEffect(() => {
+    calculateDecades();
+  }, [
+    props.selectedYear,
+    props.selectedMonth,
+    props.selectedDay,
+    props.selectedGender,
+    props.yearSky,
+    props.monthSky,
+    props.monthGround,
+  ]);
 
   const goStraight = () => {
     let forkey = 0;
@@ -156,27 +196,9 @@ const CalculateDecades = (props) => {
     }
   };
 
-  const returnDecadesSky = () => {
-    if (gender == '남자') {
-      if (yearSky.sign == '양') {
-        goStraight();
-      } else if (yearSky.sign == '음') {
-        gobackwards();
-      }
-    } else if (gender == '여자') {
-      if (yearSky.sign == '음') {
-        goStraight();
-      } else if (yearSky.sign == '양') {
-        gobackwards();
-      }
-    }
-
-    return decadesResult;
-  };
-
   return (
     <div className='min-w-[700px]:scrollbar-thin min-w-[700px]:scrollbar-thumb-slate-500 flex flex-row-reverse flex-nowrap justify-start overflow-x-scroll'>
-      {returnDecadesSky()}
+      {decadesResult}
     </div>
   );
 };

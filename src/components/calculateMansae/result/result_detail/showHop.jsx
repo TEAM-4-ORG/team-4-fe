@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const ShowHop = (props) => {
   const sky = [
@@ -25,7 +25,7 @@ const ShowHop = (props) => {
       sky.indexOf('무') + 1 == sky.indexOf('계') ||
       sky.indexOf('무') - 1 == sky.indexOf('계')
     ) {
-      skyHopArr[i] = <div>무계합화</div>;
+      skyHopArr[i] = '무계합화';
       i++;
     }
 
@@ -33,7 +33,7 @@ const ShowHop = (props) => {
       sky.indexOf('갑') + 1 == sky.indexOf('기') ||
       sky.indexOf('갑') - 1 == sky.indexOf('기')
     ) {
-      skyHopArr[i] = <div>갑기합토</div>;
+      skyHopArr[i] = '갑기합토';
       i++;
     }
 
@@ -41,7 +41,7 @@ const ShowHop = (props) => {
       sky.indexOf('정') + 1 == sky.indexOf('임') ||
       sky.indexOf('정') - 1 == sky.indexOf('임')
     ) {
-      skyHopArr[i] = <div>정임합목</div>;
+      skyHopArr[i] = '정임합목';
       i++;
     }
 
@@ -49,7 +49,7 @@ const ShowHop = (props) => {
       sky.indexOf('병') + 1 == sky.indexOf('신') ||
       sky.indexOf('병') - 1 == sky.indexOf('신')
     ) {
-      skyHopArr[i] = <div>병신합수</div>;
+      skyHopArr[i] = '병신합수';
       i++;
     }
 
@@ -57,14 +57,15 @@ const ShowHop = (props) => {
       sky.indexOf('을') + 1 == sky.indexOf('경') ||
       sky.indexOf('을') - 1 == sky.indexOf('경')
     ) {
-      skyHopArr[i] = <div>을경합금</div>;
+      skyHopArr[i] = '을경합금';
       i++;
     }
-    if (skyHopArr[0] == null) return null;
     return skyHopArr;
   };
+
   //방합을 구하는 함수
   const figureBangHop = () => {
+    let bangHopArr = [];
     let a = ground.indexOf('사');
     let b = ground.indexOf('오');
     let c = ground.indexOf('미');
@@ -72,7 +73,7 @@ const ShowHop = (props) => {
     if (a != -1 && b != -1 && c != -1) {
       //월지를 하나 차지하고 있어야함.
       if (ground[2] == '사' || ground[2] == '오' || ground[2] == '미')
-        return <div>사오미 합화</div>;
+        bangHopArr.push('사오미 합화');
     }
 
     a = ground.indexOf('신');
@@ -81,7 +82,7 @@ const ShowHop = (props) => {
 
     if (a != -1 && b != -1 && c != -1) {
       if (ground[2] == '신' || ground[2] == '유' || ground[2] == '술')
-        return <div>신유술 합금</div>;
+        bangHopArr.push('신유술 합금');
     }
     a = ground.indexOf('해');
     b = ground.indexOf('자');
@@ -89,7 +90,7 @@ const ShowHop = (props) => {
 
     if (a != -1 && b != -1 && c != -1) {
       if (ground[2] == '해' || ground[2] == '자' || ground[2] == '축')
-        return <div>해자축 합수</div>;
+        bangHopArr.push('해자축 합수');
     }
 
     a = ground.indexOf('인');
@@ -98,9 +99,9 @@ const ShowHop = (props) => {
 
     if (a != -1 && b != -1 && c != -1) {
       if (ground[2] == '인' || ground[2] == '묘' || ground[2] == '진')
-        return <div>인묘진 합목</div>;
+        bangHopArr.push('인묘진 합목');
     }
-    return null;
+    return bangHopArr;
   };
 
   const figureSomHop = () => {
@@ -116,36 +117,35 @@ const ShowHop = (props) => {
     const checkFireHop2 = fireHop.filter((x) => sample2.includes(x));
 
     if (checkFireHop1.length == 3 || checkFireHop2.length == 3) {
-      return <div> 인오술 삼합</div>;
+      return '인오술 삼합';
     }
 
     const checkGoldHop1 = goldHop.filter((x) => sample1.includes(x));
     const checkGoldHop2 = goldHop.filter((x) => sample2.includes(x));
 
     if (checkGoldHop1.length == 3 || checkGoldHop2.length == 3) {
-      return <div> 사유축 삼합</div>;
+      return '사유축 삼합';
     }
 
     const checkWaterHop1 = waterHop.filter((x) => sample1.includes(x));
     const checkWaterHop2 = waterHop.filter((x) => sample2.includes(x));
 
     if (checkWaterHop1.length == 3 || checkWaterHop2.length == 3) {
-      return <div> 신자진 삼합</div>;
+      return '신자진 삼합';
     }
 
     const checkTreeHop1 = treeHop.filter((x) => sample1.includes(x));
     const checkTreeHop2 = treeHop.filter((x) => sample2.includes(x));
 
     if (checkTreeHop1.length == 3 || checkTreeHop2.length == 3) {
-      return <div> 해묘미 삼합</div>;
+      return '해묘미 삼합';
     }
 
     return null;
   };
 
   const figureBanHop = () => {
-    let banHopResult = [];
-    let i = 0;
+    let banHopArr = [];
     //삼합이 한개라도 있으면 반합이 나올 수 없음.
     if (!figureSomHop()) {
       //화국 반합
@@ -154,126 +154,138 @@ const ShowHop = (props) => {
         const fireRight = ground.indexOf('오') + 1;
 
         if (ground[fireLeft] == '술' || ground[fireRight] == '술') {
-          banHopResult[i] = <div>오술 반합</div>;
-          i++;
+          banHopArr.push('오술 반합');
         }
         if (ground[fireLeft] == '인' || ground[fireRight] == '인') {
-          banHopResult[i] = <div>인오 반합</div>;
-          i++;
+          banHopArr.push('인오 반합');
         }
       }
 
       //금국 반합
-
       if (ground.includes('유')) {
         const goldLeft = ground.indexOf('유') - 1;
         const goldRight = ground.indexOf('유') + 1;
 
         if (ground[goldLeft] == '사' || ground[goldRight] == '사') {
-          banHopResult[i] = <div>사유 반합</div>;
-          i++;
+          banHopArr.push('사유 반합');
         }
         if (ground[goldLeft] == '축' || ground[goldRight] == '축') {
-          banHopResult[i] = <div>유축 반합</div>;
-          i++;
+          banHopArr.push('유축 반합');
         }
       }
 
       //수국 반합
-
       if (ground.includes('자')) {
         const waterLeft = ground.indexOf('자') - 1;
         const waterRight = ground.indexOf('자') + 1;
 
         if (ground[waterLeft] == '신' || ground[waterRight] == '신') {
-          banHopResult[i] = <div>신자 반합</div>;
-          i++;
+          banHopArr.push('신자 반합');
         }
         if (ground[waterLeft] == '진' || ground[waterRight] == '진') {
-          banHopResult[i] = <div>자진 반합</div>;
-          i++;
+          banHopArr.push('자진 반합');
         }
       }
 
       //목국 반합
-
       if (ground.includes('묘')) {
         const treeLeft = ground.indexOf('묘') - 1;
         const treeRight = ground.indexOf('묘') + 1;
 
         if (ground[treeLeft] == '해' || ground[treeRight] == '해') {
-          banHopResult[i] = <div>해묘 반합</div>;
-          i++;
+          banHopArr.push('해묘 반합');
         }
         if (ground[treeLeft] == '미' || ground[treeRight] == '미') {
-          banHopResult[i] = <div>묘미 반합</div>;
-          i++;
+          banHopArr.push('묘미 반합');
         }
       }
-
-      if (banHopResult[0] == null) return null;
-      return banHopResult;
     }
-
-    return null;
+    return banHopArr;
   };
 
   const figureSixHop = () => {
-    let sixHopResult = [];
-    let i = 0;
+    let sixHopArr = [];
 
     const Za = ground.indexOf('자');
     if (ground[Za - 1] == '축' || ground[Za + 1] == '축') {
-      sixHopResult[i] = <div>자축합</div>;
-      i++;
+      sixHopArr.push('자축합');
     }
 
     const In = ground.indexOf('인');
     if (ground[In - 1] == '해' || ground[In + 1] == '해') {
-      sixHopResult[i] = <div>인해합</div>;
-      i++;
+      sixHopArr.push('인해합');
     }
 
     const Myo = ground.indexOf('묘');
     if (ground[Myo - 1] == '술' || ground[Myo + 1] == '술') {
-      sixHopResult[i] = <div>묘술합</div>;
-      i++;
+      sixHopArr.push('묘술합');
     }
 
     const Jin = ground.indexOf('진');
     if (ground[Jin - 1] == '유' || ground[Jin + 1] == '유') {
-      sixHopResult[i] = <div>진유합</div>;
-      i++;
+      sixHopArr.push('진유합');
     }
 
     const Sa = ground.indexOf('사');
     if (ground[Sa - 1] == '신' || ground[Sa + 1] == '신') {
-      sixHopResult[i] = <div>사신합</div>;
-      i++;
+      sixHopArr.push('사신합');
     }
 
     const Ow = ground.indexOf('오');
     if (ground[Ow - 1] == '미' || ground[Ow + 1] == '미') {
-      sixHopResult[i] = <div>오미합</div>;
-      i++;
+      sixHopArr.push('오미합');
     }
 
-    if (sixHopResult[0] == null) return null;
-    return sixHopResult;
+    return sixHopArr;
   };
+
+  useEffect(() => {
+    const skyHop = figureSkyHop();
+    const bangHop = figureBangHop();
+    const somHop = figureSomHop();
+    const banHop = figureBanHop();
+    const sixHop = figureSixHop();
+
+    if (props.onHopCalculated) {
+      props.onHopCalculated({
+        skyHop,
+        bangHop,
+        somHop,
+        banHop,
+        sixHop,
+      });
+    }
+  }, [
+    props.yearSky,
+    props.yearGround,
+    props.monthSky,
+    props.monthGround,
+    props.daySky,
+    props.dayGround,
+    props.timeSky,
+    props.timeGround,
+  ]);
 
   return (
     <div>
-      {figureSkyHop()}
-      {figureBangHop()}
-      {figureSomHop()}
-      {figureBanHop()}
-      {figureSixHop()}
-      {!figureSkyHop() &&
-        !figureBangHop() &&
+      {figureSkyHop().map((hop, index) => (
+        <div key={`sky-${index}`}>{hop}</div>
+      ))}
+      {figureBangHop().map((hop, index) => (
+        <div key={`bang-${index}`}>{hop}</div>
+      ))}
+      {figureSomHop() && <div>{figureSomHop()}</div>}
+      {figureBanHop().map((hop, index) => (
+        <div key={`ban-${index}`}>{hop}</div>
+      ))}
+      {figureSixHop().map((hop, index) => (
+        <div key={`six-${index}`}>{hop}</div>
+      ))}
+      {!figureSkyHop().length &&
+        !figureBangHop().length &&
         !figureSomHop() &&
-        !figureBanHop() &&
-        !figureSixHop() && <div>합 없음</div>}
+        !figureBanHop().length &&
+        !figureSixHop().length && <div>합 없음</div>}
     </div>
   );
 };

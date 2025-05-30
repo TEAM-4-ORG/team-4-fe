@@ -320,7 +320,6 @@ class Logic {
     const minutesString = timeCal.substring(4, 6);
     const hour = Number(hourString);
     const minutes = Number(minutesString);
-    let timeGround = null;
 
     let arrCheck = 0;
     let arrNum = Math.floor(hour / 2);
@@ -349,7 +348,6 @@ class Logic {
     const minutesString = timeCal.substring(4, 6);
     const hour = Number(hourString);
     const minutes = Number(minutesString);
-    let timeGround = null;
 
     let arrCheck = 0;
     let arrNum = Math.floor(hour / 2);
