@@ -75,7 +75,7 @@ const Analysis = (props) => {
           timeSky={timeSky}
           timeGround={timeGround}
         />
-        <div className='mt-[10px] mb-1 inline-block text-[1.2rem]'>대운</div>
+        {/* <div className='mt-[10px] mb-1 inline-block text-[1.2rem]'>대운</div>
         <CalculateDecades
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
@@ -105,7 +105,7 @@ const Analysis = (props) => {
         <div className='inline-block text-[0.5rem]'>
           ↔양 옆으로 드래그하세요
         </div>
-        <ShowDays />
+        <ShowDays /> */}
       </div>
     </div>
   );

@@ -5,10 +5,11 @@ export type SkyType = {
   sign: '음' | '양';
   key: number;
   code: string;
-  color: string;
+  color: ColorKey;
 };
 
 export type GenderType = '남자' | '여자';
+export type ColorKey = 'green' | 'red' | 'yellow' | 'white' | 'black';
 
 // 지지(地支) 타입
 export type GroundType = {
@@ -29,14 +30,14 @@ export type GroundType = {
   sign: '음' | '양';
   key: number;
   code: string;
-  color: string;
+  color: ColorKey;
   innerAttri: string;
 };
 
 // 오행 카운트 타입
 export type FiveElementCount = {
   count: number;
-  color: string;
+  color: ColorKey;
 };
 
 // 오행 분석 결과 타입
@@ -88,7 +89,7 @@ export interface SajuRequest {
       day: number; // 출생 일
       time: string; // 출생 시간
     };
-    gender: '남자' | '여자'; // 성별
+    gender: GenderType; // 성별
   };
   sajuPillars: {
     yearPillar: SajuPillar; // 연주(年柱) - 출생 연도의 천간과 지지

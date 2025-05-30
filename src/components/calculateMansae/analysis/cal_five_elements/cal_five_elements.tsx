@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SkyType,
   GroundType,
-  FiveElementCount,
   FiveElementsResult,
 } from '../../../../types/saju';
 
@@ -18,29 +17,17 @@ interface CalFiveElementsProps {
   onFiveElementsCalculated?: (data: FiveElementsResult) => void;
 }
 
+/**
+ * @description - 오행 분석 컴포넌트
+ */
 const CalFiveElements: React.FC<CalFiveElementsProps> = (props) => {
-  const tree: FiveElementCount = {
-    count: 0,
-    color: 'green',
-  };
-  const fire: FiveElementCount = {
-    count: 0,
-    color: 'red',
-  };
-  const water: FiveElementCount = {
-    count: 0,
-    color: 'black',
-  };
-  const earth: FiveElementCount = {
-    count: 0,
-    color: 'yellow',
-  };
-  const gold: FiveElementCount = {
-    count: 0,
-    color: 'white',
-  };
-
-  // const fiveElements: FiveElementCount[] = [tree, fire, earth, gold, water];
+  const [elements, setElements] = useState<FiveElementsResult>({
+    tree: { count: 0, color: 'green' },
+    fire: { count: 0, color: 'red' },
+    earth: { count: 0, color: 'yellow' },
+    gold: { count: 0, color: 'white' },
+    water: { count: 0, color: 'black' },
+  });
 
   const toCal: (SkyType | GroundType)[] = [
     props.yearSky,
@@ -54,37 +41,36 @@ const CalFiveElements: React.FC<CalFiveElementsProps> = (props) => {
   ];
 
   const calculateFiveElements = () => {
-    // Reset counts
-    tree.count = 0;
-    fire.count = 0;
-    earth.count = 0;
-    gold.count = 0;
-    water.count = 0;
+    const result: FiveElementsResult = {
+      tree: { count: 0, color: 'green' },
+      fire: { count: 0, color: 'red' },
+      earth: { count: 0, color: 'yellow' },
+      gold: { count: 0, color: 'white' },
+      water: { count: 0, color: 'black' },
+    };
 
-    for (let i = 0; i < toCal.length; i++) {
-      if (toCal[i].symbol === '목') {
-        tree.count += 1;
-      } else if (toCal[i].symbol === '화') {
-        fire.count += 1;
-      } else if (toCal[i].symbol === '토') {
-        earth.count += 1;
-      } else if (toCal[i].symbol === '금') {
-        gold.count += 1;
-      } else if (toCal[i].symbol === '수') {
-        water.count += 1;
+    for (const item of toCal) {
+      switch (item.symbol) {
+        case '목':
+          result.tree.count++;
+          break;
+        case '화':
+          result.fire.count++;
+          break;
+        case '토':
+          result.earth.count++;
+          break;
+        case '금':
+          result.gold.count++;
+          break;
+        case '수':
+          result.water.count++;
+          break;
       }
     }
 
-    // Call the callback with the calculated results
-    if (props.onFiveElementsCalculated) {
-      props.onFiveElementsCalculated({
-        tree,
-        fire,
-        earth,
-        gold,
-        water,
-      });
-    }
+    setElements(result);
+    props.onFiveElementsCalculated?.(result);
   };
 
   useEffect(() => {
@@ -101,12 +87,12 @@ const CalFiveElements: React.FC<CalFiveElementsProps> = (props) => {
   ]);
 
   return (
-    <div className='flex flex-row flex-nowrap'>
-      <p>목: {tree.count}</p>
-      <p>화: {fire.count}</p>
-      <p>토: {earth.count}</p>
-      <p>금: {gold.count}</p>
-      <p>수: {water.count}</p>
+    <div className='flex flex-row flex-nowrap gap-4 text-lg font-semibold'>
+      <p>목: {elements.tree.count}</p>
+      <p>화: {elements.fire.count}</p>
+      <p>토: {elements.earth.count}</p>
+      <p>금: {elements.gold.count}</p>
+      <p>수: {elements.water.count}</p>
     </div>
   );
 };

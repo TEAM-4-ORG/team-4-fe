@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Logic from '../logic/logic';
 import CalculateFamily from '../logic/calculate_family';
-import { useState } from 'react';
 import ShowHop from './result_detail/showHop';
-import Data from '../data/data';
 import CalculateInnerAttri from '../logic/calculate_innerAttri';
 import ShowPlusMinus from './result_detail/showPlusMinus';
 import ShowChung from './result_detail/showChung';
+import { ColorKey } from '@/types/saju';
 
-export const bgColorMap = {
+export const bgColorMap: Record<ColorKey, string> = {
   green: 'bg-green-500',
   red: 'bg-red-500',
   yellow: 'bg-yellow-400',
@@ -16,7 +15,7 @@ export const bgColorMap = {
   black: 'bg-gray-800',
 };
 
-export const textColorMap = {
+export const textColorMap: Record<ColorKey, string> = {
   green: 'text-green-500',
   red: 'text-red-500',
   yellow: 'text-yellow-400',
@@ -24,15 +23,20 @@ export const textColorMap = {
   black: 'text-gray-800',
 };
 
-const FourPillarViewer = (props) => {
+interface FourPillarViewerProp {
+  selectedYear: number;
+  selectedMonth: number;
+  selectedDay: number;
+  selectedTime: string;
+}
+
+const FourPillarViewer = ({
+  selectedYear,
+  selectedMonth,
+  selectedDay,
+  selectedTime,
+}: FourPillarViewerProp) => {
   const logic = new Logic();
-  const data = new Data();
-
-  const selectedYear = props.selectedYear;
-  const selectedMonth = props.selectedMonth;
-  const selectedDay = props.selectedDay;
-
-  const selectedTime = props.selectedTime;
 
   const yearSky = logic.returnYearSky(selectedYear, selectedMonth, selectedDay);
   const yearGround = logic.returnYearGround(
@@ -63,21 +67,17 @@ const FourPillarViewer = (props) => {
   );
   const timeGround = logic.returnTimeGround(selectedTime);
 
-  const [detailKey, setDetailKey] = useState(false);
+  // const [detailKey, setDetailKey] = useState(false);
 
-  const showDetail = () => {
-    if (!detailKey) {
-      setDetailKey(true);
-      console.log(detailKey + '토글완');
-    } else {
-      setDetailKey(false);
-      console.log(detailKey + '토글완');
-    }
-  };
-
-  useEffect(() => {
-    console.log(timeSky);
-  }, [timeSky]);
+  // const showDetail = () => {
+  //   if (!detailKey) {
+  //     setDetailKey(true);
+  //     console.log(detailKey + '토글완');
+  //   } else {
+  //     setDetailKey(false);
+  //     console.log(detailKey + '토글완');
+  //   }
+  // };
 
   return (
     <div className='mt-[150px] w-[87%] bg-white shadow-lg'>
@@ -203,7 +203,7 @@ const FourPillarViewer = (props) => {
             </td>
           </tr>
           <tr>
-            <td colspan='4'>
+            <td colSpan={4}>
               <ShowHop
                 yearSky={yearSky}
                 monthSky={monthSky}
