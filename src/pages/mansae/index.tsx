@@ -10,8 +10,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { GenderType, GroundType, SkyType } from '@/types/saju';
 
 import { useState } from 'react';
+
+export interface sajuData {
+  yearSky: SkyType;
+  yearGround: GroundType;
+  monthSky: SkyType;
+  monthGround: GroundType;
+  daySky: SkyType;
+  dayGround: GroundType;
+  timeSky: SkyType;
+  timeGround: GroundType;
+}
 
 function MansaePage() {
   const today = {
@@ -24,9 +36,9 @@ function MansaePage() {
   const [selectedMonth, setSelectedMonth] = useState(today.month);
   const [selectedDay, setSelectedDay] = useState(today.date);
   const [selectedTime, setSelectedTime] = useState('09:50');
-  const [selectedGender, setSelectedGender] = useState('남자');
+  const [selectedGender, setSelectedGender] = useState<GenderType>('남자');
   const [showResult, setShowResult] = useState(false);
-  const [sajuData, setSajuData] = useState(null);
+  const [sajuData, setSajuData] = useState<sajuData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const onAdd = (
@@ -34,7 +46,7 @@ function MansaePage() {
     month: number,
     day: number,
     time: string,
-    gender: string
+    gender: GenderType
   ) => {
     setSelectedYear(year);
     //그냥 month로 넣었을땐 왜 갑자만 뜬거임..?
@@ -48,7 +60,7 @@ function MansaePage() {
     setIsDialogOpen(false);
   };
 
-  const handleAnalysisComplete = (data) => {
+  const handleAnalysisComplete = (data: sajuData) => {
     setSajuData(data);
   };
 

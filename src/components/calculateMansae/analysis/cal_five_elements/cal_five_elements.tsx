@@ -40,7 +40,7 @@ const CalFiveElements: React.FC<CalFiveElementsProps> = (props) => {
     color: 'white',
   };
 
-  const fiveElements: FiveElementCount[] = [tree, fire, earth, gold, water];
+  // const fiveElements: FiveElementCount[] = [tree, fire, earth, gold, water];
 
   const toCal: (SkyType | GroundType)[] = [
     props.yearSky,

@@ -8,6 +8,8 @@ export type SkyType = {
   color: string;
 };
 
+export type GenderType = '남자' | '여자';
+
 // 지지(地支) 타입
 export type GroundType = {
   name:

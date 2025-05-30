@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { sendSajuData, formatSajuData } from '../../../../api/sajuApi';
+import { formatSajuData } from '../../../../api/sajuApi';
 import ShowHop from './showHop';
 import ShowChung from './showChung';
 
@@ -9,25 +9,17 @@ import {
   HopAnalysis,
   ChungAnalysis,
   DecadesAnalysis,
-  SkyType,
-  GroundType,
+  GenderType,
 } from '../../../../types/saju';
 import CalFiveElements from '../../analysis/cal_five_elements/cal_five_elements';
+import { sajuData } from '@/pages/mansae';
 
-interface ResultDetailProps {
-  yearSky: SkyType;
-  yearGround: GroundType;
-  monthSky: SkyType;
-  monthGround: GroundType;
-  daySky: SkyType;
-  dayGround: GroundType;
-  timeSky: SkyType;
-  timeGround: GroundType;
+interface ResultDetailProps extends sajuData {
   selectedYear: number;
   selectedMonth: number;
   selectedDay: number;
   selectedTime: string;
-  selectedGender: '남자' | '여자';
+  selectedGender: GenderType;
 }
 
 interface AnalysisData {
@@ -38,8 +30,8 @@ interface AnalysisData {
 }
 
 const ResultDetail: React.FC<ResultDetailProps> = (props) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [error, setError] = useState<string | null>(null);
   const [analysisData, setAnalysisData] = useState<AnalysisData>({
     fiveElements: null,
     hopData: null,
@@ -113,16 +105,16 @@ const ResultDetail: React.FC<ResultDetailProps> = (props) => {
       ...props,
       ...analysisData,
     });
-    console.log(formattedData);
+    console.log('formattedData', formattedData);
   }, [props, analysisData]);
 
-  if (isLoading) {
-    return <div>데이터를 전송하는 중입니다...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>데이터를 전송하는 중입니다...</div>;
+  // }
 
-  if (error) {
-    return <div>에러가 발생했습니다: {error}</div>;
-  }
+  // if (error) {
+  //   return <div>에러가 발생했습니다: {error}</div>;
+  // }
 
   return (
     <div>

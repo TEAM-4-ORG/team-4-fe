@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Data from '../../data/data';
+import CalTimesLogic from '../analysis_logic/cal_times_logic';
 import GetDecadesNumber from './get_decades_number/get_decades_number';
 import GetDecadesNumberR from './get_decades_number/get_decades_number_r';
 import GetDecadesYear from './get_decades_year/get_decades_year';
@@ -7,6 +8,7 @@ import GetDecadesYearR from './get_decades_year/get_decades_year_r';
 
 const CalculateDecades = (props) => {
   const data = new Data();
+  const cal_times_logic = new CalTimesLogic();
   const selectedYear = props.selectedYear;
   const selectedMonth = props.selectedMonth;
   const selectedDay = props.selectedDay;
@@ -21,11 +23,6 @@ const CalculateDecades = (props) => {
     (i) => i.name == monthGround.name
   );
 
-  //순행한다고 했을 때 8월 8일~9월 7일생 까지
-  // 절기력으로 백로의 기준을 따른다. (8월 8일~9월 7일까지 신달이다.)
-  // 이렇게 되면 month 숫자의 값을 받아오면 부정확해지고,
-  // monthGroundIndex의 값을 받아와야 절기력으로 같은 달이 같은 숫자의 적용을 받으므로 정확하다.
-
   let decadesSkyArr = [];
   let decadesGroundArr = [];
   let decadesResult = [];
@@ -34,26 +31,25 @@ const CalculateDecades = (props) => {
     decadesSkyArr = [];
     decadesGroundArr = [];
     decadesResult = [];
+    let decades = [];
 
     if (gender == '남자') {
       if (yearSky.sign == '양') {
-        goStraight();
+        decades = goStraight();
       } else if (yearSky.sign == '음') {
-        gobackwards();
+        decades = gobackwards();
       }
     } else if (gender == '여자') {
       if (yearSky.sign == '음') {
-        goStraight();
+        decades = goStraight();
       } else if (yearSky.sign == '양') {
-        gobackwards();
+        decades = gobackwards();
       }
     }
 
     if (props.onDecadesCalculated) {
       props.onDecadesCalculated({
-        decadesSky: decadesSkyArr,
-        decadesGround: decadesGroundArr,
-        decadesResult: decadesResult,
+        decades: decades,
       });
     }
   };
@@ -71,10 +67,17 @@ const CalculateDecades = (props) => {
   ]);
 
   const goStraight = () => {
+    let decades = [];
     let forkey = 0;
-    //대운 순행 함수
+    let currentMonthSkyIndex = monthSkyIndex;
+    let currentMonthGroundIndex = monthGroundIndex;
+    const monthIndex = data.ground.findIndex((i) => i.name == monthGround.name);
+    const dateTotalCount = new Date(selectedYear, selectedMonth, 0).getDate();
+
+    // UI 렌더링을 위한 배열 생성
     for (let i = 0; i < 10; i++) {
-      monthSkyIndex = monthSkyIndex < 9 ? ++monthSkyIndex : 0;
+      currentMonthSkyIndex =
+        currentMonthSkyIndex < 9 ? ++currentMonthSkyIndex : 0;
       decadesSkyArr.push(
         <>
           <GetDecadesNumber
@@ -82,16 +85,14 @@ const CalculateDecades = (props) => {
             selectedYear={selectedYear}
             selectedMonth={selectedMonth}
             selectedDay={selectedDay}
-            monthIndex={data.ground.findIndex(
-              (i) => i.name == monthGround.name
-            )}
-          ></GetDecadesNumber>
+            monthIndex={monthIndex}
+          />
           <span
             key={forkey}
             className='m-0 w-full border border-slate-400/40 text-center'
-            id={data.sky[monthSkyIndex].color}
+            id={data.sky[currentMonthSkyIndex].color}
           >
-            {data.sky[monthSkyIndex].code}
+            {data.sky[currentMonthSkyIndex].code}
           </span>
         </>
       );
@@ -99,25 +100,24 @@ const CalculateDecades = (props) => {
     }
 
     for (let i = 0; i < 10; i++) {
-      monthGroundIndex = monthGroundIndex < 11 ? ++monthGroundIndex : 0;
+      currentMonthGroundIndex =
+        currentMonthGroundIndex < 11 ? ++currentMonthGroundIndex : 0;
       decadesGroundArr.push(
         <>
           <span
             key={forkey}
             className='m-0 w-full border border-slate-400/40 text-center'
-            id={data.ground[monthGroundIndex].color}
+            id={data.ground[currentMonthGroundIndex].color}
           >
-            {data.ground[monthGroundIndex].code}
+            {data.ground[currentMonthGroundIndex].code}
           </span>
           <GetDecadesYear
             order={i}
             selectedYear={selectedYear}
             selectedMonth={selectedMonth}
             selectedDay={selectedDay}
-            monthIndex={data.ground.findIndex(
-              (i) => i.name == monthGround.name
-            )}
-          ></GetDecadesYear>
+            monthIndex={monthIndex}
+          />
         </>
       );
       forkey++;
@@ -131,13 +131,47 @@ const CalculateDecades = (props) => {
         </span>
       );
     }
+
+    // 데이터 객체 생성
+    currentMonthSkyIndex = monthSkyIndex;
+    currentMonthGroundIndex = monthGroundIndex;
+    for (let i = 0; i < 10; i++) {
+      currentMonthSkyIndex =
+        currentMonthSkyIndex < 9 ? ++currentMonthSkyIndex : 0;
+      currentMonthGroundIndex =
+        currentMonthGroundIndex < 11 ? ++currentMonthGroundIndex : 0;
+
+      const year = cal_times_logic.returnYear(
+        selectedYear,
+        selectedMonth,
+        selectedDay,
+        monthIndex,
+        dateTotalCount,
+        i
+      );
+
+      decades.push({
+        year: year,
+        sky: data.sky[currentMonthSkyIndex],
+        ground: data.ground[currentMonthGroundIndex],
+      });
+    }
+
+    return decades;
   };
 
   const gobackwards = () => {
+    let decades = [];
     let forkey = 0;
-    //대운 역행 함수
+    let currentMonthSkyIndex = monthSkyIndex;
+    let currentMonthGroundIndex = monthGroundIndex;
+    const monthIndex = data.ground.findIndex((i) => i.name == monthGround.name);
+    const dateTotalCount = new Date(selectedYear, selectedMonth, 0).getDate();
+
+    // UI 렌더링을 위한 배열 생성
     for (let i = 0; i < 10; i++) {
-      monthSkyIndex = monthSkyIndex > 0 ? --monthSkyIndex : 9;
+      currentMonthSkyIndex =
+        currentMonthSkyIndex > 0 ? --currentMonthSkyIndex : 9;
       decadesSkyArr.push(
         <>
           <GetDecadesNumberR
@@ -145,16 +179,14 @@ const CalculateDecades = (props) => {
             selectedYear={selectedYear}
             selectedMonth={selectedMonth}
             selectedDay={selectedDay}
-            monthIndex={data.ground.findIndex(
-              (i) => i.name == monthGround.name
-            )}
-          ></GetDecadesNumberR>
+            monthIndex={monthIndex}
+          />
           <span
             key={forkey}
             className='m-0 w-full border border-slate-400/40 text-center'
-            id={data.sky[monthSkyIndex].color}
+            id={data.sky[currentMonthSkyIndex].color}
           >
-            {data.sky[monthSkyIndex].code}
+            {data.sky[currentMonthSkyIndex].code}
           </span>
         </>
       );
@@ -162,25 +194,24 @@ const CalculateDecades = (props) => {
     }
 
     for (let i = 0; i < 10; i++) {
-      monthGroundIndex = monthGroundIndex > 0 ? --monthGroundIndex : 11;
+      currentMonthGroundIndex =
+        currentMonthGroundIndex > 0 ? --currentMonthGroundIndex : 11;
       decadesGroundArr.push(
         <>
           <span
             key={forkey}
             className='m-0 w-full border border-slate-400/40 text-center'
-            id={data.ground[monthGroundIndex].color}
+            id={data.ground[currentMonthGroundIndex].color}
           >
-            {data.ground[monthGroundIndex].code}
+            {data.ground[currentMonthGroundIndex].code}
           </span>
           <GetDecadesYearR
             order={i}
             selectedYear={selectedYear}
             selectedMonth={selectedMonth}
             selectedDay={selectedDay}
-            monthIndex={data.ground.findIndex(
-              (i) => i.name == monthGround.name
-            )}
-          ></GetDecadesYearR>
+            monthIndex={monthIndex}
+          />
         </>
       );
       forkey++;
@@ -194,6 +225,33 @@ const CalculateDecades = (props) => {
         </span>
       );
     }
+
+    // 데이터 객체 생성
+    currentMonthSkyIndex = monthSkyIndex;
+    currentMonthGroundIndex = monthGroundIndex;
+    for (let i = 0; i < 10; i++) {
+      currentMonthSkyIndex =
+        currentMonthSkyIndex > 0 ? --currentMonthSkyIndex : 9;
+      currentMonthGroundIndex =
+        currentMonthGroundIndex > 0 ? --currentMonthGroundIndex : 11;
+
+      const year = cal_times_logic.returnYearR(
+        selectedYear,
+        selectedMonth,
+        selectedDay,
+        monthIndex,
+        dateTotalCount,
+        i
+      );
+
+      decades.push({
+        year: year,
+        sky: data.sky[currentMonthSkyIndex],
+        ground: data.ground[currentMonthGroundIndex],
+      });
+    }
+
+    return decades;
   };
 
   return (

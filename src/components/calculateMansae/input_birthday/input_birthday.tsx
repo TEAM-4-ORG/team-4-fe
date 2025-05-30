@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DialogFooter } from '@/components/ui/dialog';
+import { GenderType } from '@/types/saju';
 
 interface InputBirthdayProps {
   onAdd: (
@@ -10,7 +11,7 @@ interface InputBirthdayProps {
     month: number,
     day: number,
     time: string,
-    gender: string
+    gender: GenderType
   ) => void;
 }
 
@@ -19,7 +20,7 @@ const InputBirthday: React.FC<InputBirthdayProps> = ({ onAdd }) => {
   const [month, setMonth] = useState('');
   const [day, setDay] = useState('');
   const [time, setTime] = useState('09:50');
-  const [gender, setGender] = useState('남자');
+  const [gender, setGender] = useState<GenderType>('남자');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
