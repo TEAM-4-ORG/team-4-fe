@@ -2,20 +2,23 @@ import AxiosService from '../api/axiosService';
 import { UserInfoResponse, BasicResponse, UserRequest } from './types';
 
 class UserService extends AxiosService {
+  constructor() {
+    super('/api/user');
+  }
   getUserInfo(userId: number): Promise<UserInfoResponse> {
-    return this.http.get(`/api/user/info/${userId}`);
+    return this.http.get(`/info/${userId}`);
   }
 
   createUser(data: UserRequest): Promise<BasicResponse> {
-    return this.http.post(`/api/user/new`, data);
+    return this.http.post(`/new`, data);
   }
 
   deleteUser(userId: number): Promise<BasicResponse> {
-    return this.http.delete(`/api/user/delete/${userId}`);
+    return this.http.delete(`/delete/${userId}`);
   }
 
   updateUser(userId: number, data: UserRequest): Promise<BasicResponse> {
-    return this.http.put(`/api/user/change/${userId}`, data);
+    return this.http.put(`/change/${userId}`, data);
   }
 }
 

@@ -1,5 +1,10 @@
 import AxiosService from '../api/axiosService';
-import { ProjectDetailResponse, BasicResponse } from './types';
+import {
+  ProjectDetailResponse,
+  BasicResponse,
+  CreateProjectRequest,
+  CreateProjectResponse,
+} from './types';
 
 class ProjectService extends AxiosService {
   constructor() {
@@ -8,6 +13,10 @@ class ProjectService extends AxiosService {
 
   getProject(projectId: number): Promise<ProjectDetailResponse> {
     return this.http.get(`/${projectId}`);
+  }
+
+  postProject(payload: CreateProjectRequest): Promise<CreateProjectResponse> {
+    return this.http.post(`/new`, payload);
   }
 
   deleteProject(projectId: number): Promise<BasicResponse> {

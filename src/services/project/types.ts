@@ -20,3 +20,13 @@ export interface BasicResponse {
   code: string;
   message: string;
 }
+
+export interface CreateProjectRequest {
+  user_id: number;
+  type: 'SAJU' | 'TAROT';
+  first_question: string;
+}
+
+export interface CreateProjectResponse extends BasicResponse {
+  result: { title: string };
+}
