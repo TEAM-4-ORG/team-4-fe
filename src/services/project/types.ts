@@ -1,3 +1,5 @@
+import { projectType } from '@/types/common';
+
 export interface ProjectDetailResponse {
   isSuccess: boolean;
   code: string;
@@ -23,7 +25,7 @@ export interface BasicResponse {
 
 export interface CreateProjectRequest {
   user_id: number;
-  type: 'SAJU' | 'TAROT';
+  type: projectType;
   first_question: string;
 }
 

@@ -1,3 +1,5 @@
+import { projectType } from '@/types/common';
+
 export interface UserInfoResponse {
   user_id: number;
   birth: string;
@@ -6,7 +8,7 @@ export interface UserInfoResponse {
   projects: {
     project_id: number;
     title: string;
-    type: 'SAJU' | 'TAROT';
+    type: projectType;
   }[];
 }
 
