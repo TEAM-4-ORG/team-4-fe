@@ -65,7 +65,7 @@ export function TarotSimulatorDialog({ onCardsSelected, onClose }: TarotSimulato
     return () => {
       // 컴포넌트 언마운트 시 전역 함수 참조를 정리합니다.
       if (window.ReceiveDrawnCards === handleReceiveDrawnCards) {
-        delete window.ReceiveDrawnCards;
+        delete (window as any).ReceiveDrawnCards;
       }
     };
   }, [handleReceiveDrawnCards]); // 의존성 배열에 handleReceiveDrawnCards 추가
