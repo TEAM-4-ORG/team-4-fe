@@ -6,6 +6,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Sparkles, Gem } from 'lucide-react';
 import { toast } from 'sonner';
 import { MessageDisplay } from './MessageDisplay'; // 메시지 렌더링 컴포넌트 추가
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'; // Shadcn Dialog 임포트
+import { TarotSimulatorDialog } from './TarotSimulatorDialog'; // 새롭게 생성할 타로 시뮬레이터 컴포넌트 임포트
 
 export interface Message {
   id: string;
@@ -13,16 +15,24 @@ export interface Message {
   text: string;
 }
 
+// 뽑힌 타로 카드 정보를 위한 인터페이스 추가
+export interface TarotCard {
+  id: string;
+  name: string;
+}
+
 interface ChatWindowProps {
   chatType: 'saju' | 'tarot'; // 사주 또는 타로 상담 타입
   initialMessages?: Message[]; // 초기 메시지 (기록 불러올 때 사용)
-  onSendMessage: (message: string) => Promise<void>; // 메시지 전송 핸들러
+  onSendMessage: (message: string, cardInfo?: TarotCard[]) => Promise<void>; // 카드 정보 추가
 }
 
 export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isTarotDialogOpened, setIsTarotDialogOpened] = useState(false); // 다이얼로그 열림/닫힘 상태
+  const [selectedTarotCards, setSelectedTarotCards] = useState<TarotCard[]>([]); // 뽑힌 타로 카드 정보
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,6 +53,15 @@ export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: Ch
   const handleSendMessage = async () => {
     if (inputMessage.trim() === '' || isLoading) return;
 
+    // 타로 상담이고 아직 카드를 뽑지 않았다면 다이얼로그를 엽니다.
+    // TODO : api 연결 후 다이얼로그 오픈 로직 정하기
+    if (chatType === 'tarot' && selectedTarotCards.length === 0) {
+      
+      setIsTarotDialogOpened(true);
+      return; // 메시지 전송 로직은 다이얼로그에서 카드를 뽑고 제출할 때 처리
+    }
+
+    // 사용자 메시지 추가
     const newUserMessage: Message = {
       id: Date.now().toString(),
       sender: 'user',
@@ -53,7 +72,38 @@ export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: Ch
     setIsLoading(true);
 
     try {
-      await onSendMessage(inputMessage); // 부모 컴포넌트의 API 호출 로직 호출
+      // 카드 정보가 있다면 함께 전송합니다.
+      await onSendMessage(inputMessage, selectedTarotCards.length > 0 ? selectedTarotCards : undefined);
+      setSelectedTarotCards([]); // 카드 전송 후 초기화
+    } catch (error) {
+      console.error('메시지 전송 에러:', error);
+      toast.error('메시지 전송 실패', {
+        description: '챗봇 응답을 가져오는 데 실패했습니다.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 타로 시뮬레이터 다이얼로그에서 제출 시 호출될 함수
+  const handleTarotSelectionComplete = async (cards: TarotCard[]) => {
+    setSelectedTarotCards(cards);
+    setIsTarotDialogOpened(false); // 다이얼로그 닫기
+    // 카드 정보가 준비되었으므로 메시지 전송 로직을 다시 호출합니다.
+    // 주의: 이 시점에는 inputMessage가 비어있지 않아야 합니다.
+    // 또는, 여기서 직접 onSendMessage를 호출할 수 있습니다.
+    const newUserMessage: Message = {
+      id: Date.now().toString(),
+      sender: 'user',
+      text: inputMessage, // 이전에 입력된 메시지를 사용
+    };
+    setMessages((prev) => [...prev, newUserMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      await onSendMessage(newUserMessage.text, cards);
+      setSelectedTarotCards([]); // 카드 전송 후 초기화
     } catch (error) {
       console.error('메시지 전송 에러:', error);
       toast.error('메시지 전송 실패', {
@@ -125,6 +175,14 @@ export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: Ch
           </Button>
         </div>
       </div>
+
+      {/* 타로 시뮬레이터 다이얼로그 */}
+      <Dialog open={isTarotDialogOpened} onOpenChange={setIsTarotDialogOpened}>
+        <TarotSimulatorDialog
+          onCardsSelected={handleTarotSelectionComplete}
+          onClose={() => setIsTarotDialogOpened(false)}
+        />
+      </Dialog>
     </div>
   );
 }
