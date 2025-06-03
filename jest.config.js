@@ -14,9 +14,9 @@ const customJestConfig = {
   },
   testEnvironment: 'jest-environment-jsdom',
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
-  transformIgnorePatterns: [
-    '/node_modules/(?!(some-module-you-need-to-transform)/)',
-  ],
+  transform: {
+    '^.+\\.(ts|tsx|js|jsx)$': ['@swc/jest'],
+  },
   // Jest가 테스트 파일로 인식할 파일 확장자(typescript 추가)
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };
