@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Sparkles, Gem } from 'lucide-react';
 import { toast } from 'sonner';
 import { MessageDisplay } from './MessageDisplay'; // 메시지 렌더링 컴포넌트 추가
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'; // Shadcn Dialog 임포트
+import { Dialog } from '@/components/ui/dialog'; // Shadcn Dialog 임포트
 import { TarotSimulatorDialog } from './TarotSimulatorDialog'; // 새롭게 생성할 타로 시뮬레이터 컴포넌트 임포트
 
 export interface Message {
@@ -22,12 +22,16 @@ export interface TarotCard {
 }
 
 interface ChatWindowProps {
-  chatType: 'saju' | 'tarot'; // 사주 또는 타로 상담 타입
+  chatType: 'saju' | 'tarot' | 'init'; // 사주 또는 타로 상담 타입
   initialMessages?: Message[]; // 초기 메시지 (기록 불러올 때 사용)
   onSendMessage: (message: string, cardInfo?: TarotCard[]) => Promise<void>; // 카드 정보 추가
 }
 
-export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: ChatWindowProps) {
+export function ChatWindow({
+  chatType,
+  initialMessages = [],
+  onSendMessage,
+}: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +60,6 @@ export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: Ch
     // 타로 상담이고 아직 카드를 뽑지 않았다면 다이얼로그를 엽니다.
     // TODO : api 연결 후 다이얼로그 오픈 로직 정하기
     if (chatType === 'tarot' && selectedTarotCards.length === 0) {
-      
       setIsTarotDialogOpened(true);
       return; // 메시지 전송 로직은 다이얼로그에서 카드를 뽑고 제출할 때 처리
     }
@@ -73,7 +76,10 @@ export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: Ch
 
     try {
       // 카드 정보가 있다면 함께 전송합니다.
-      await onSendMessage(inputMessage, selectedTarotCards.length > 0 ? selectedTarotCards : undefined);
+      await onSendMessage(
+        inputMessage,
+        selectedTarotCards.length > 0 ? selectedTarotCards : undefined
+      );
       setSelectedTarotCards([]); // 카드 전송 후 초기화
     } catch (error) {
       console.error('메시지 전송 에러:', error);
@@ -121,29 +127,31 @@ export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: Ch
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900">
+    <div className='flex h-full flex-col bg-white dark:bg-gray-900'>
       {/* 상단 바 (선택 사항) */}
-      <header className="border-b dark:border-gray-800 p-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">
+      <header className='flex items-center justify-between border-b p-4 dark:border-gray-800'>
+        <h2 className='text-xl font-semibold'>
           {chatType === 'saju' ? '사주 상담' : '타로 상담'}
         </h2>
-        <Button variant="outline" size="sm">
-          <Sparkles className="mr-2 h-4 w-4" /> AI 모델
+        <Button variant='outline' size='sm'>
+          <Sparkles className='mr-2 h-4 w-4' /> AI 모델
         </Button>
       </header>
 
       {/* 메시지 표시 영역 */}
-      <ScrollArea className="flex-1 p-4 overflow-y-auto" ref={scrollAreaRef}>
-        <div className="space-y-4">
+      <ScrollArea className='flex-1 overflow-y-auto p-4' ref={scrollAreaRef}>
+        <div className='space-y-4'>
           {messages.length === 0 && !isLoading && (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
+            <div className='flex h-full flex-col items-center justify-center text-gray-500 dark:text-gray-400'>
               {chatType === 'saju' ? (
-                <Sparkles className="h-16 w-16 mb-4 text-blue-500" />
+                <Sparkles className='mb-4 h-16 w-16 text-blue-500' />
               ) : (
-                <Gem className="h-16 w-16 mb-4 text-purple-500" />
+                <Gem className='mb-4 h-16 w-16 text-purple-500' />
               )}
-              <p className="text-lg">
-                {chatType === 'saju' ? '사주에 대해 무엇이든 물어보세요!' : '타로 카드를 통해 궁금증을 해결하세요!'}
+              <p className='text-lg'>
+                {chatType === 'saju'
+                  ? '사주에 대해 무엇이든 물어보세요!'
+                  : '타로 카드를 통해 궁금증을 해결하세요!'}
               </p>
             </div>
           )}
@@ -151,27 +159,31 @@ export function ChatWindow({ chatType, initialMessages = [], onSendMessage }: Ch
             <MessageDisplay key={msg.id} message={msg} />
           ))}
           {isLoading && (
-            <div className="flex justify-center py-2">
-              <span className="loading loading-dots loading-lg text-blue-500"></span> {/* 로딩 스피너 (Tailwind CSS 또는 다른 CSS 프레임워크에 맞게 조정) */}
+            <div className='flex justify-center py-2'>
+              <span className='loading loading-dots loading-lg text-blue-500'></span>{' '}
+              {/* 로딩 스피너 (Tailwind CSS 또는 다른 CSS 프레임워크에 맞게 조정) */}
             </div>
           )}
         </div>
       </ScrollArea>
 
       {/* 메시지 입력 영역 */}
-      <div className="border-t dark:border-gray-800 p-4">
-        <div className="flex items-center gap-2">
+      <div className='border-t p-4 dark:border-gray-800'>
+        <div className='flex items-center gap-2'>
           <Input
-            placeholder="메시지를 입력하세요..."
+            placeholder='메시지를 입력하세요...'
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1"
+            className='flex-1'
             disabled={isLoading}
           />
-          <Button onClick={handleSendMessage} disabled={inputMessage.trim() === '' || isLoading}>
-            <Send className="h-5 w-5" />
-            <span className="sr-only">메시지 전송</span>
+          <Button
+            onClick={handleSendMessage}
+            disabled={inputMessage.trim() === '' || isLoading}
+          >
+            <Send className='h-5 w-5' />
+            <span className='sr-only'>메시지 전송</span>
           </Button>
         </div>
       </div>

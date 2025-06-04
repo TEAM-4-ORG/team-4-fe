@@ -11,6 +11,13 @@ export type SkyType = {
 export type GenderType = '남자' | '여자';
 export type ColorKey = 'green' | 'red' | 'yellow' | 'white' | 'black';
 
+export interface BasicInfo {
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  birthTime: string;
+}
+
 // 지지(地支) 타입
 export type GroundType = {
   name:
@@ -82,15 +89,9 @@ export type DecadesAnalysis = {
 
 // 사주 데이터 요청 타입
 export interface SajuRequest {
-  basicInfo: {
-    birthDate: {
-      year: number; // 출생 연도
-      month: number; // 출생 월
-      day: number; // 출생 일
-      time: string; // 출생 시간
-    };
-    gender: GenderType; // 성별
-  };
+  birth: string;
+  time: string;
+  gender: boolean; // 성별 (true - 남성 / false - 여성)
   sajuPillars: {
     yearPillar: SajuPillar; // 연주(年柱) - 출생 연도의 천간과 지지
     monthPillar: SajuPillar; // 월주(月柱) - 출생 월의 천간과 지지

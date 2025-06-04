@@ -10,8 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import useUserIdCheck from '@/hooks/useUserIdCheck';
-import { GenderType, GroundType, SkyType } from '@/types/saju';
+import { BasicInfo, GenderType, GroundType, SkyType } from '@/types/saju';
 
 import { useState } from 'react';
 
@@ -26,20 +25,32 @@ export interface sajuData {
   timeGround: GroundType;
 }
 
-function CalculateMansae() {
+function CalculateMansae({
+  type = 'dialog',
+  shouldOpenDialog,
+}: {
+  type?: 'dialog' | 'inline';
+  shouldOpenDialog?: boolean;
+}) {
   const today = {
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
     date: new Date().getDate(),
   };
 
-  const { shouldOpenDialog, userIds } = useUserIdCheck();
-
-  const [selectedYear, setSelectedYear] = useState(today.year);
-  const [selectedMonth, setSelectedMonth] = useState(today.month);
-  const [selectedDay, setSelectedDay] = useState(today.date);
-  const [selectedTime, setSelectedTime] = useState('09:50');
+  const [selectedYear, setSelectedYear] = useState<BasicInfo['birthYear']>(
+    today.year
+  );
+  const [selectedMonth, setSelectedMonth] = useState<BasicInfo['birthMonth']>(
+    today.month
+  );
+  const [selectedDay, setSelectedDay] = useState<BasicInfo['birthDay']>(
+    today.date
+  );
+  const [selectedTime, setSelectedTime] =
+    useState<BasicInfo['birthTime']>('09:50');
   const [selectedGender, setSelectedGender] = useState<GenderType>('남자');
+
   const [showResult, setShowResult] = useState(false);
   const [sajuData, setSajuData] = useState<sajuData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
@@ -65,7 +76,48 @@ function CalculateMansae() {
   const handleAnalysisComplete = (data: sajuData) => {
     setSajuData(data);
   };
+
   const buttonTitle = showResult ? '사주 보기' : '사주 입력하기';
+
+  const resultContents = showResult ? (
+    <>
+      <FourPillarViewer
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        selectedDay={selectedDay}
+        selectedTime={selectedTime}
+      />
+
+      <Analysis
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        selectedDay={selectedDay}
+        selectedTime={selectedTime}
+        selectedGender={selectedGender}
+        onAnalysisComplete={handleAnalysisComplete}
+      />
+
+      {sajuData && (
+        <ResultDetail
+          {...sajuData}
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+          selectedDay={selectedDay}
+          selectedTime={selectedTime}
+          selectedGender={selectedGender}
+        />
+      )}
+    </>
+  ) : (
+    <>
+      <DialogHeader>
+        <DialogTitle>사주 정보 입력</DialogTitle>
+      </DialogHeader>
+      <InputBirthday onAdd={onAdd} />
+    </>
+  );
+
+  if (type === 'inline') return <InputBirthday onAdd={onAdd} />;
 
   return (
     <div>
@@ -78,45 +130,7 @@ function CalculateMansae() {
             {buttonTitle}
           </Button>
         </DialogTrigger>
-        <DialogContent className='h-fit'>
-          {showResult ? (
-            <>
-              <FourPillarViewer
-                selectedYear={selectedYear}
-                selectedMonth={selectedMonth}
-                selectedDay={selectedDay}
-                selectedTime={selectedTime}
-              />
-
-              <Analysis
-                selectedYear={selectedYear}
-                selectedMonth={selectedMonth}
-                selectedDay={selectedDay}
-                selectedTime={selectedTime}
-                selectedGender={selectedGender}
-                onAnalysisComplete={handleAnalysisComplete}
-              />
-
-              {sajuData && (
-                <ResultDetail
-                  {...sajuData}
-                  selectedYear={selectedYear}
-                  selectedMonth={selectedMonth}
-                  selectedDay={selectedDay}
-                  selectedTime={selectedTime}
-                  selectedGender={selectedGender}
-                />
-              )}
-            </>
-          ) : (
-            <>
-              <DialogHeader>
-                <DialogTitle>사주 정보 입력</DialogTitle>
-              </DialogHeader>
-              <InputBirthday onAdd={onAdd} />
-            </>
-          )}
-        </DialogContent>
+        <DialogContent className='h-fit'>{resultContents}</DialogContent>
       </Dialog>
     </div>
   );
