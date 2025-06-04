@@ -13,6 +13,7 @@ import {
 import { useCreateUser } from '@/services/user';
 import { BasicInfo, GenderType, GroundType, SkyType } from '@/types/saju';
 import { saveUserInfoToLocalStorage } from '@/utils/localStorage';
+import { useRouter } from 'next/router';
 
 import { useState } from 'react';
 
@@ -56,6 +57,7 @@ function CalculateMansae({
   const [showResult, setShowResult] = useState(false);
   const [sajuData, setSajuData] = useState<sajuData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
+  const router = useRouter();
 
   const { mutate } = useCreateUser({
     onSuccess(data) {
@@ -66,8 +68,11 @@ function CalculateMansae({
           birthMonth: selectedMonth,
           birthDay: selectedDay,
           birthTime: selectedTime,
+          gender: selectedGender,
         },
       });
+
+      router.replace(`${data.result.user_id}/saju`);
     },
     onSettled(data) {
       console.log(data);

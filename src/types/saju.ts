@@ -16,6 +16,7 @@ export interface BasicInfo {
   birthMonth: number;
   birthDay: number;
   birthTime: string;
+  gender: GenderType;
 }
 
 // 지지(地支) 타입

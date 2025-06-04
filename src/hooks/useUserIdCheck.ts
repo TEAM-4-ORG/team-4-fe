@@ -1,11 +1,12 @@
 import { localStorageUserInfo } from '@/types/common';
+import { STORAGE_KEY } from '@/utils/localStorage';
 import { useEffect, useState } from 'react';
 
 export default function useUserIdCheck() {
   const [userInfoList, setUserInfoList] = useState<localStorageUserInfo[]>([]);
 
   useEffect(() => {
-    const raw = localStorage.getItem('userInfoList');
+    const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
