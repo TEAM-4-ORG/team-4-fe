@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import useUserIdCheck from '@/hooks/useUserIdCheck';
 import { GenderType, GroundType, SkyType } from '@/types/saju';
 
 import { useState } from 'react';
@@ -32,6 +33,8 @@ function CalculateMansae() {
     date: new Date().getDate(),
   };
 
+  const { shouldOpenDialog, userIds } = useUserIdCheck();
+
   const [selectedYear, setSelectedYear] = useState(today.year);
   const [selectedMonth, setSelectedMonth] = useState(today.month);
   const [selectedDay, setSelectedDay] = useState(today.date);
@@ -39,7 +42,7 @@ function CalculateMansae() {
   const [selectedGender, setSelectedGender] = useState<GenderType>('남자');
   const [showResult, setShowResult] = useState(false);
   const [sajuData, setSajuData] = useState<sajuData | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
 
   const onAdd = (
     year: number,
