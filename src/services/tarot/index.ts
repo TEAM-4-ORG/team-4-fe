@@ -4,7 +4,6 @@ import { TarotConsultRequest, TarotConsultResponse } from './types';
 import { tarotService } from './taroService';
 
 export const useTarotConsult = (
-  payload: TarotConsultRequest,
   options?: Omit<
     UseMutationOptions<TarotConsultResponse, Error, TarotConsultRequest>,
     'mutationKey' | 'mutationFn'
@@ -12,6 +11,6 @@ export const useTarotConsult = (
 ) =>
   useMutation({
     mutationKey: tarotConsultKey(),
-    mutationFn: () => tarotService.consult(payload),
+    mutationFn: (payload: TarotConsultRequest) => tarotService.consult(payload),
     ...options,
   });

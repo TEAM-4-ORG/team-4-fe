@@ -102,7 +102,7 @@ const InputBirthday: React.FC<InputBirthdayProps> = ({ onAdd }) => {
       </div>
 
       <DialogFooter>
-        <Button type='submit'>사주 보기</Button>
+        <Button type='submit'>사주 입력하기</Button>
       </DialogFooter>
     </form>
   );

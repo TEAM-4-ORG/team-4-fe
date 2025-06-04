@@ -4,7 +4,7 @@ import {
   UseQueryOptions,
   UseMutationOptions,
 } from '@tanstack/react-query';
-import { deleteProjectKey, projectInfoKey } from './keys';
+import { projectInfoKey } from './keys';
 import { projectService } from './projectService';
 
 export const useProjectInfo = (
@@ -21,18 +21,16 @@ export const useProjectInfo = (
   });
 
 export const useDeleteProject = (
-  projectId: number,
   options?: Omit<
     UseMutationOptions<
       Awaited<ReturnType<typeof projectService.deleteProject>>,
       Error,
-      void
+      number
     >,
     'mutationKey' | 'mutationFn'
   >
 ) =>
   useMutation({
-    mutationKey: deleteProjectKey(projectId),
-    mutationFn: () => projectService.deleteProject(projectId),
+    mutationFn: (projectId: number) => projectService.deleteProject(projectId),
     ...options,
   });

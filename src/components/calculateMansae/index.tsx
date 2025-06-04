@@ -10,7 +10,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useCreateUser } from '@/services/user';
 import { BasicInfo, GenderType, GroundType, SkyType } from '@/types/saju';
+import { saveUserInfoToLocalStorage } from '@/utils/localStorage';
 
 import { useState } from 'react';
 
@@ -55,6 +57,23 @@ function CalculateMansae({
   const [sajuData, setSajuData] = useState<sajuData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
 
+  const { mutate } = useCreateUser({
+    onSuccess(data) {
+      saveUserInfoToLocalStorage({
+        userId: data.result.user_id,
+        info: {
+          birthYear: selectedYear,
+          birthMonth: selectedMonth,
+          birthDay: selectedDay,
+          birthTime: selectedTime,
+        },
+      });
+    },
+    onSettled(data) {
+      console.log(data);
+    },
+  });
+
   const onAdd = (
     year: number,
     month: number,
@@ -62,15 +81,18 @@ function CalculateMansae({
     time: string,
     gender: GenderType
   ) => {
+    const payload = {
+      birth: `${year}-${month}-${day}`,
+      time: time,
+      gender: gender === '남자',
+    };
     setSelectedYear(year);
-    //그냥 month로 넣었을땐 왜 갑자만 뜬거임..?
-    // setSelectedMonth(month);
-    //일주부터 시작해서 다 영향받았음..
     setSelectedMonth(month - 1);
     setSelectedDay(day);
     setSelectedTime(time);
     setSelectedGender(gender);
     setShowResult(true);
+    mutate(payload);
   };
 
   const handleAnalysisComplete = (data: sajuData) => {

@@ -4,7 +4,6 @@ import { SajuConsultRequest, SajuConsultResponse } from './types';
 import { sajuService } from './sajuService';
 
 export const useSajuConsult = (
-  payload: SajuConsultRequest,
   options?: Omit<
     UseMutationOptions<SajuConsultResponse, Error, SajuConsultRequest>,
     'mutationKey' | 'mutationFn'
@@ -12,6 +11,7 @@ export const useSajuConsult = (
 ) =>
   useMutation({
     mutationKey: sajuConsultKey,
-    mutationFn: () => sajuService.postConsult(payload),
+    mutationFn: (payload: SajuConsultRequest) =>
+      sajuService.postConsult(payload),
     ...options,
   });
