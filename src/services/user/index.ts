@@ -6,7 +6,12 @@ import {
 } from '@tanstack/react-query';
 import { userKeys } from './keys';
 import { userService } from './userService';
-import { UserRequest, UserInfoResponse, BasicResponse } from './types';
+import {
+  UserRequest,
+  UserInfoResponse,
+  BasicResponse,
+  PostUserResponse,
+} from './types';
 
 // GET
 export const useUserInfo = (
@@ -23,7 +28,7 @@ export const useUserInfo = (
 export const useCreateUser = (
   payload: UserRequest,
   options?: Omit<
-    UseMutationOptions<BasicResponse, Error, UserRequest>,
+    UseMutationOptions<PostUserResponse, Error, UserRequest>,
     'mutationKey' | 'mutationFn'
   >
 ) =>
