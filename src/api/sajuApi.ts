@@ -1,23 +1,4 @@
-import axios from 'axios';
 import { SajuRequest, SkyType, GroundType } from '../types/saju';
-
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
-
-/**
- * 사주 데이터를 백엔드로 전송하는 함수
- * @param sajuData - 사주 분석 데이터
- * @returns Promise<Response> - 백엔드 응답
- */
-export const sendSajuData = async (sajuData: SajuRequest): Promise<any> => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/api/saju`, sajuData);
-    return response.data;
-  } catch (error) {
-    console.error('Error sending saju data:', error);
-    throw error;
-  }
-};
 
 /**
  * 사주 데이터를 백엔드 형식에 맞게 변환하는 함수
@@ -137,15 +118,9 @@ export const formatSajuData = (props: any): SajuRequest => {
   } = props;
 
   return {
-    basicInfo: {
-      birthDate: {
-        year: selectedYear,
-        month: selectedMonth + 1,
-        day: selectedDay,
-        time: selectedTime,
-      },
-      gender: selectedGender,
-    },
+    birth: `${selectedYear}-${selectedMonth + 1}-${selectedDay}`,
+    time: selectedTime,
+    gender: selectedGender === '남성',
     sajuPillars: {
       yearPillar: {
         sky: yearSky as SkyType,

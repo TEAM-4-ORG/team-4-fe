@@ -1,5 +1,10 @@
 import AxiosService from '../api/axiosService';
-import { UserInfoResponse, BasicResponse, UserRequest } from './types';
+import {
+  UserInfoResponse,
+  BasicResponse,
+  UserRequest,
+  PostUserResponse,
+} from './types';
 
 class UserService extends AxiosService {
   constructor() {
@@ -9,7 +14,7 @@ class UserService extends AxiosService {
     return this.http.get(`/info/${userId}`);
   }
 
-  createUser(data: UserRequest): Promise<BasicResponse> {
+  createUser(data: UserRequest): Promise<PostUserResponse> {
     return this.http.post(`/new`, data);
   }
 

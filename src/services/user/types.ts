@@ -23,3 +23,9 @@ export interface BasicResponse {
   code: string;
   message: string;
 }
+
+export interface PostUserResponse extends BasicResponse {
+  result: {
+    user_id: number;
+  };
+}

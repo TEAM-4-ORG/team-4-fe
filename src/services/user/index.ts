@@ -6,9 +6,13 @@ import {
 } from '@tanstack/react-query';
 import { userKeys } from './keys';
 import { userService } from './userService';
-import { UserRequest, UserInfoResponse, BasicResponse } from './types';
+import {
+  UserRequest,
+  UserInfoResponse,
+  BasicResponse,
+  PostUserResponse,
+} from './types';
 
-// GET
 export const useUserInfo = (
   userId: number,
   options?: Omit<UseQueryOptions<UserInfoResponse>, 'queryKey' | 'queryFn'>
@@ -19,40 +23,48 @@ export const useUserInfo = (
     ...options,
   });
 
-// POST
 export const useCreateUser = (
-  payload: UserRequest,
   options?: Omit<
-    UseMutationOptions<BasicResponse, Error, UserRequest>,
+    UseMutationOptions<PostUserResponse, Error, UserRequest>,
     'mutationKey' | 'mutationFn'
   >
 ) =>
   useMutation({
     mutationKey: userKeys.create(),
-    mutationFn: () => userService.createUser(payload),
+    // mutationFn: (payload: UserRequest) => userService.createUser(payload),
+    mutationFn: (payload: UserRequest) => {
+      return {
+        isSuccess: true,
+        code: 'COMMON200',
+        message: '유저 추가에 성공했습니다.',
+        result: {
+          user_id: 1,
+        },
+      };
+    },
     ...options,
   });
 
-// DELETE
 export const useDeleteUser = (
-  userId: number,
-  options?: Omit<UseMutationOptions<BasicResponse, Error, void>, 'mutationFn'>
+  options?: Omit<UseMutationOptions<BasicResponse, Error, number>, 'mutationFn'>
 ) =>
   useMutation({
-    mutationFn: () => userService.deleteUser(userId),
+    mutationFn: (userId: number) => userService.deleteUser(userId),
     ...options,
   });
 
-// PUT
 export const useUpdateUser = (
-  userId: number,
-  payload: UserRequest,
   options?: Omit<
-    UseMutationOptions<BasicResponse, Error, UserRequest>,
+    UseMutationOptions<
+      BasicResponse,
+      Error,
+      { userId: number; payload: UserRequest }
+    >,
     'mutationFn'
   >
 ) =>
   useMutation({
-    mutationFn: () => userService.updateUser(userId, payload),
+    mutationFn: ({ userId, payload }) =>
+      userService.updateUser(userId, payload),
     ...options,
   });
