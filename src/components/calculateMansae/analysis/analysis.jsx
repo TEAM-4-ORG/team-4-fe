@@ -5,6 +5,7 @@ import Logic from '../logic/logic';
 import CalYears from './calculate_years/cal_years';
 import CalMonths from './calculate_months/cal_months';
 import ShowDays from './show_days/showDays';
+import { cn } from '@/lib/utils';
 
 const Analysis = (props) => {
   const logic = new Logic();
@@ -60,7 +61,12 @@ const Analysis = (props) => {
   }, []);
 
   return (
-    <div className='relative mx-auto my-[30px] flex w-[87%] flex-col items-center justify-center'>
+    <div
+      className={cn(
+        'relative mx-auto my-[30px] flex w-[87%] flex-col items-center justify-center',
+        props.hide && 'hidden'
+      )}
+    >
       <div className='w-full'>
         <div className='mt-[10px] mb-1 inline-block text-[1.2rem]'>
           오행분포

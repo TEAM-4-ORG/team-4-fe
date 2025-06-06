@@ -6,6 +6,7 @@ import CalculateInnerAttri from '../logic/calculate_innerAttri';
 import ShowPlusMinus from './result_detail/showPlusMinus';
 import ShowChung from './result_detail/showChung';
 import { ColorKey } from '@/types/saju';
+import { cn } from '@/lib/utils';
 
 export const bgColorMap: Record<ColorKey, string> = {
   green: 'bg-green-500',
@@ -28,6 +29,7 @@ interface FourPillarViewerProp {
   selectedMonth: number;
   selectedDay: number;
   selectedTime: string;
+  hide?: boolean;
 }
 
 const FourPillarViewer = ({
@@ -35,6 +37,7 @@ const FourPillarViewer = ({
   selectedMonth,
   selectedDay,
   selectedTime,
+  hide = false,
 }: FourPillarViewerProp) => {
   const logic = new Logic();
 
@@ -80,7 +83,7 @@ const FourPillarViewer = ({
   // };
 
   return (
-    <div className='w-[87%] bg-white shadow-lg'>
+    <div className={cn('w-[87%] bg-white shadow-lg', hide && 'hidden')}>
       <table className='w-full'>
         <thead>
           <tr>
