@@ -5,9 +5,7 @@ export interface SajuConsultRequest {
   saju_data: {
     basicInfo: {
       birthDate: {
-        year: number;
-        month: number;
-        day: number;
+        birth: string;
         time: string;
       };
       gender: '남자' | '여자';

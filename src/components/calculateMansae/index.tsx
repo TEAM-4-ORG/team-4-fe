@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { useCreateUser } from '@/services/user';
 import { BasicInfo, GenderType, GroundType, SkyType } from '@/types/saju';
+import { formattingDate } from '@/utils/formattingDate';
 import { saveUserInfoToLocalStorage } from '@/utils/localStorage';
 import { useRouter } from 'next/router';
 
@@ -87,7 +88,7 @@ function CalculateMansae({
     gender: GenderType
   ) => {
     const payload = {
-      birth: `${year}-${month}-${day}`,
+      birth: formattingDate(year, month, day),
       time: time,
       gender: gender === '남자',
     };
