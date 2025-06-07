@@ -1,73 +1,147 @@
-// pages/saju/index.tsx
 import { useState, useEffect } from 'react';
 import { ChatLayout } from '@/components/layout/ChatLayout';
-import { ChatWindow, Message } from '@/components/chat/ChatWindow';
+import { Message } from '@/components/chat/ChatWindow';
 import { useRouter } from 'next/router';
-import { toast } from 'sonner';
+import { useUserInfo } from '@/services/user';
+import { useSajuConsult } from '@/services/saju';
+import { useNewProject, useProjectInfo } from '@/services/project';
+import { CreateProjectRequest } from '@/services/project/types';
+import { SajuConsultRequest } from '@/services/saju/types';
+import { getUserInfoFromLocalStorage } from '@/utils/localStorage';
+import { SajuChatWindow } from '@/components/chat/SajuChatWindow';
+import { UseMutationResult } from '@tanstack/react-query';
 
 export default function SajuChatPage() {
   const router = useRouter();
-  const { chatId } = router.query;
+  const { chatId, userId } = router.query;
   const [messages, setMessages] = useState<Message[]>([]);
 
+  // fetch sidebar
+  const { data: userInfo } = useUserInfo(Number(userId), {
+    enabled: !!userId,
+  });
+
+  //chatId 있으면 fetch
+  const { data: projectInfo, isSuccess: projectInfoIsSuccess } = useProjectInfo(
+    Number(chatId),
+    {
+      enabled: !!chatId,
+    }
+  );
+
+  const {
+    mutateAsync: postSajuAsync,
+    isPending: isBotTyping,
+  }: UseMutationResult = useSajuConsult();
+
+  const { mutateAsync: postProjectAsync } = useNewProject();
+
   useEffect(() => {
-    // chatId가 변경될 때마다 해당 채팅 기록을 불러옵니다.
-    // 실제 앱에서는 API를 호출하여 데이터베이스에서 불러옵니다.
-    if (chatId) {
-      console.log(`사주 상담 기록 불러오기: ${chatId}`);
+    if (!chatId) {
       setMessages([
-        { id: '1', sender: 'bot', text: `환영합니다! 사주 상담 기록 ${chatId}입니다.` },
-        { id: '2', sender: 'user', text: `제가 ${chatId}에 대해 궁금한 것이 있어요.` },
-      ]);
-    } else {
-      // 새로운 채팅 시작 시 초기 메시지
-      setMessages([
-        { id: '1', sender: 'bot', text: '안녕하세요! 사주에 대해 무엇이든 물어보세요. 생년월일시와 성별을 알려주시면 더욱 정확한 상담이 가능합니다.' },
+        {
+          id: '1',
+          sender: 'bot',
+          text: '안녕하세요! 사주에 대해 무엇이든 물어보세요. 생년월일시와 성별을 알려주시면 더욱 정확한 상담이 가능합니다.',
+        },
       ]);
     }
-  }, [chatId]);
+
+    if (projectInfoIsSuccess) {
+      const consultations = projectInfo.result.consultations;
+
+      const messages: Message[] = consultations.flatMap((item) => [
+        {
+          id: `${item.consultation_id}_question`,
+          sender: 'user',
+          text: item.question,
+        },
+        {
+          id: `${item.consultation_id}_result`,
+          sender: 'bot',
+          text: item.result,
+        },
+      ]);
+      setMessages(messages);
+    }
+  }, [chatId, projectInfoIsSuccess, projectInfo]);
 
   const handleSendMessage = async (userMessage: string) => {
-    const newUserMessage: Message = { id: Date.now().toString(), sender: 'user', text: userMessage };
-    setMessages((prev) => [...prev, newUserMessage]);
+    const timestamp = Date.now().toString();
+    const newUserMessage: Message = {
+      id: timestamp + '_user',
+      sender: 'user',
+      text: userMessage,
+    };
+
+    const placeholderBotMessageId = timestamp + '_bot';
+    const placeHolderBotMessage: Message = {
+      id: placeholderBotMessageId,
+      sender: 'bot',
+      text: '',
+    };
+
+    setMessages((prev) => [...prev, newUserMessage, placeHolderBotMessage]);
+
+    let currentProjectId = chatId;
+
+    // chatId가 없을 경우 새 프로젝트 생성
+    if (!chatId) {
+      const projectRequest: CreateProjectRequest = {
+        user_id: userId,
+        type: 'SAJU',
+        first_question: userMessage,
+      };
+
+      const response = await postProjectAsync(projectRequest);
+      currentProjectId = response.result.projectId.toString();
+
+      // URL 업데이트
+      router.replace(`/${userId}/saju?chatId=${currentProjectId}`);
+    }
+
+    const userInfo = getUserInfoFromLocalStorage(Number(userId));
+
+    const request: SajuConsultRequest = {
+      user_id: Number(userId),
+      project_id: Number(currentProjectId),
+      question: userMessage,
+      sajuData: userInfo?.saju,
+    };
 
     try {
-      const response = await fetch('/api/saju-chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: userMessage, chatId: chatId || 'new_saju_chat' }),
-      });
+      const response = await postSajuAsync(request);
+      const botMessage: Message = {
+        id: placeholderBotMessageId,
+        sender: 'bot',
+        text: response.result.result,
+      };
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const botResponseText = data.response || '사주 상담 챗봇 응답을 받을 수 없습니다.';
-
-      setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), sender: 'bot', text: botResponseText }]);
-
-      // 새 채팅이면 chatId를 업데이트하고 URL을 변경하여 새로운 채팅 기록을 저장할 수 있도록 합니다.
-      if (!chatId && data.newChatId) {
-        router.push(`/saju?chatId=${data.newChatId}`, undefined, { shallow: true });
-      }
-
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === placeholderBotMessageId ? botMessage : msg
+        )
+      );
     } catch (error) {
-      console.error('사주 LLM API 호출 에러:', error);
-      toast.error('사주 LLM API 호출 에러', {
-        description: '사주 LLM API 호출에 실패했습니다.',
-      });
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === placeholderBotMessageId
+            ? {
+                ...msg,
+                text: '사주 상담 챗봇 응답을 받을 수 없습니다.',
+              }
+            : msg
+        )
+      );
     }
   };
 
   return (
-    <ChatLayout>
-      <ChatWindow
-        chatType="saju"
+    <ChatLayout projects={userInfo?.projects}>
+      <SajuChatWindow
         initialMessages={messages}
         onSendMessage={handleSendMessage}
+        isBotTyping={isBotTyping}
       />
     </ChatLayout>
   );

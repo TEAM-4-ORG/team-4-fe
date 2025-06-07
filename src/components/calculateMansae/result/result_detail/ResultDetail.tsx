@@ -23,6 +23,7 @@ interface ResultDetailProps extends sajuData {
   selectedTime: string;
   selectedGender: GenderType;
   handleSetSajuData: (data: SajuRequest) => void;
+  setIsSajuDataSettled: (value: boolean) => void;
   hide?: boolean;
 }
 
@@ -77,6 +78,15 @@ const ResultDetail: React.FC<ResultDetailProps> = (props) => {
       ...analysisData,
     });
     props.handleSetSajuData(formattedData);
+
+    // Check if all analysis data is ready
+    const isAllDataReady =
+      analysisData.fiveElements !== null &&
+      analysisData.hopData !== null &&
+      analysisData.chungData !== null &&
+      analysisData.decadesData !== null;
+
+    props.setIsSajuDataSettled(isAllDataReady);
     console.log('formattedData', formattedData);
   }, [analysisData]);
 
