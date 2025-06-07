@@ -49,6 +49,12 @@ export default function TarotChatPage() {
 
     if (projectInfoIsSuccess) {
       const consultations = projectInfo.result.consultations;
+      const lastConsultation = consultations[consultations.length - 1];
+      //이후 API수정 되면 카드 정보 받아오는 로직 수정 필요
+      const initialCards = lastConsultation?.cards?.map((card: string) => ({
+        id: card,
+        name: card,
+      })) || [];
 
       const messages: Message[] = consultations.flatMap((item: Consultation) => [
         {
@@ -63,8 +69,11 @@ export default function TarotChatPage() {
         },
       ]);
       setMessages(messages);
+      setInitialCards(initialCards);
     }
   }, [chatId, projectInfoIsSuccess, projectInfo]);
+
+  const [initialCards, setInitialCards] = useState<TarotCard[]>([]);
 
   const handleSendMessage = async (userMessage: string, cardInfo?: TarotCard[]) => {
     const timestamp = Date.now().toString();
@@ -144,6 +153,7 @@ export default function TarotChatPage() {
       <ChatWindow
         chatType="tarot"
         initialMessages={messages}
+        initialCards={initialCards}
         onSendMessage={handleSendMessage}
         isLoading={isBotTyping}
       />

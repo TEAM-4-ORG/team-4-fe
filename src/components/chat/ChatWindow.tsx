@@ -24,6 +24,7 @@ export interface TarotCard {
 interface ChatWindowProps {
   chatType: 'saju' | 'tarot' | 'init'; // 사주 또는 타로 상담 타입
   initialMessages?: Message[]; // 초기 메시지 (기록 불러올 때 사용)
+  initialCards?: TarotCard[]; // 초기 카드 정보 (기록 불러올 때 사용)
   onSendMessage: (message: string, cardInfo?: TarotCard[]) => Promise<void>; // 카드 정보 추가
   isLoading?: boolean;
   isBotTyping?: boolean;
@@ -32,6 +33,7 @@ interface ChatWindowProps {
 export function ChatWindow({
   chatType,
   initialMessages = [],
+  initialCards = [],
   onSendMessage,
   isLoading = false,
   isBotTyping = false,
@@ -39,7 +41,7 @@ export function ChatWindow({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isTarotDialogOpened, setIsTarotDialogOpened] = useState(false); // 다이얼로그 열림/닫힘 상태
-  const [selectedTarotCards, setSelectedTarotCards] = useState<TarotCard[]>([]); // 뽑힌 타로 카드 정보
+  const [selectedTarotCards, setSelectedTarotCards] = useState<TarotCard[]>(initialCards); // 초기 카드 정보로 설정
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -60,11 +62,10 @@ export function ChatWindow({
   const handleSendMessage = async () => {
     if (inputMessage.trim() === '' || isLoading) return;
 
-    // 타로 상담이고 아직 카드를 뽑지 않았다면 다이얼로그를 엽니다.
-    // TODO : api 연결 후 다이얼로그 오픈 로직 정하기
+    // 타로 상담이고 아직 카드를 뽑지 않았으며, 기존 선택된 카드도 없는 경우에만 다이얼로그를 엽니다.
     if (chatType === 'tarot' && selectedTarotCards.length === 0) {
       setIsTarotDialogOpened(true);
-      return; // 메시지 전송 로직은 다이얼로그에서 카드를 뽑고 제출할 때 처리
+      return;
     }
 
     // 사용자 메시지 추가
@@ -75,22 +76,19 @@ export function ChatWindow({
     };
     setMessages((prev) => [...prev, newUserMessage]);
     setInputMessage('');
-    // setIsLoading(true);
 
     try {
-      // 카드 정보가 있다면 함께 전송합니다.
+      // 기존에 선택된 카드가 있다면 그대로 사용하고, 없다면 undefined 전달
       await onSendMessage(
         inputMessage,
         selectedTarotCards.length > 0 ? selectedTarotCards : undefined
       );
-      setSelectedTarotCards([]); // 카드 전송 후 초기화
+      // 카드 정보는 초기화하지 않음 (기존 카드 정보 유지)
     } catch (error) {
       console.error('메시지 전송 에러:', error);
       toast.error('메시지 전송 실패', {
         description: '챗봇 응답을 가져오는 데 실패했습니다.',
       });
-    } finally {
-      // setIsLoading(false);
     }
   };
 
