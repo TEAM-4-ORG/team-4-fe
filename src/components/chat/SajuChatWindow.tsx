@@ -45,13 +45,6 @@ export function SajuChatWindow({
     setInputMessage('');
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   useEffect(() => {
     setMessages(initialMessages);
   }, [initialMessages]);
@@ -68,7 +61,10 @@ export function SajuChatWindow({
       </header>
 
       {/* 메시지 표시 영역 */}
-      <ScrollArea className='flex-1 overflow-y-auto p-4' ref={scrollAreaRef}>
+      <ScrollArea
+        className='flex-1 overflow-y-auto p-4'
+        viewportRef={scrollAreaRef}
+      >
         <div className='space-y-4'>
           {messages.length === 0 && !isLoading && (
             <div className='flex h-full flex-col items-center justify-center text-gray-500 dark:text-gray-400'>
@@ -83,35 +79,33 @@ export function SajuChatWindow({
               isBotTyping={isBotTyping}
             />
           ))}
-          {isLoading && (
-            <div className='flex justify-center py-2'>
-              <span className='loading loading-dots loading-lg text-blue-500'></span>{' '}
-              {/* 로딩 스피너 (Tailwind CSS 또는 다른 CSS 프레임워크에 맞게 조정) */}
-            </div>
-          )}
         </div>
       </ScrollArea>
-
       {/* 메시지 입력 영역 */}
-      <div className='border-t p-4 dark:border-gray-800'>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSendMessage();
+        }}
+        className='border-t p-4 dark:border-gray-800'
+      >
         <div className='flex items-center gap-2'>
           <Input
             placeholder='메시지를 입력하세요...'
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
             className='flex-1'
             disabled={isLoading}
           />
           <Button
-            onClick={handleSendMessage}
+            type='submit'
             disabled={inputMessage.trim() === '' || isLoading}
           >
             <Send className='h-5 w-5' />
             <span className='sr-only'>메시지 전송</span>
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

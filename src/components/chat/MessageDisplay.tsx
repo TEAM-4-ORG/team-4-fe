@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Message } from './ChatWindow';
-import { Loader2 } from 'lucide-react';
+import LoadingSpinnerDot from '../LoadingSpinnerDot';
 
 interface MessageDisplayProps {
   message: Message;
@@ -30,11 +30,7 @@ export function MessageDisplay({ message, isBotTyping }: MessageDisplayProps) {
             : 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
         }`}
       >
-        {isBotLoading ? (
-          <Loader2 className='h-5 w-5 animate-spin text-gray-500 dark:text-gray-300' />
-        ) : (
-          <p>{message.text}</p>
-        )}
+        {isBotLoading ? <LoadingSpinnerDot /> : <p>{message.text}</p>}
       </div>
 
       {message.sender === 'user' && (
