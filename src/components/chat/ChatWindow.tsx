@@ -26,6 +26,7 @@ interface ChatWindowProps {
   initialMessages?: Message[]; // 초기 메시지 (기록 불러올 때 사용)
   onSendMessage: (message: string, cardInfo?: TarotCard[]) => Promise<void>; // 카드 정보 추가
   isLoading?: boolean;
+  isBotTyping?: boolean;
 }
 
 export function ChatWindow({
@@ -33,6 +34,7 @@ export function ChatWindow({
   initialMessages = [],
   onSendMessage,
   isLoading = false,
+  isBotTyping = false,
 }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
@@ -121,12 +123,6 @@ export function ChatWindow({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
-    }
-  };
-
   return (
     <div className='flex h-full flex-col bg-white dark:bg-gray-900'>
       {/* 상단 바 (선택 사항) */}
@@ -157,7 +153,11 @@ export function ChatWindow({
             </div>
           )}
           {messages.map((msg) => (
-            <MessageDisplay key={msg.id} message={msg} />
+            <MessageDisplay
+              key={msg.id}
+              message={msg}
+              isBotTyping={isBotTyping}
+            />
           ))}
           {isLoading && (
             <div className='flex justify-center py-2'>
@@ -169,25 +169,30 @@ export function ChatWindow({
       </ScrollArea>
 
       {/* 메시지 입력 영역 */}
-      <div className='border-t p-4 dark:border-gray-800'>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSendMessage();
+        }}
+        className='border-t p-4 dark:border-gray-800'
+      >
         <div className='flex items-center gap-2'>
           <Input
             placeholder='메시지를 입력하세요...'
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
             className='flex-1'
             disabled={isLoading}
           />
           <Button
-            onClick={handleSendMessage}
+            type='submit'
             disabled={inputMessage.trim() === '' || isLoading}
           >
             <Send className='h-5 w-5' />
             <span className='sr-only'>메시지 전송</span>
           </Button>
         </div>
-      </div>
+      </form>
 
       {/* 타로 시뮬레이터 다이얼로그 */}
       <Dialog open={isTarotDialogOpened} onOpenChange={setIsTarotDialogOpened}>
