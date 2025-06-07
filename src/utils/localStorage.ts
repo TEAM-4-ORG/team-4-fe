@@ -23,3 +23,21 @@ export function saveUserInfoToLocalStorage(newUser: localStorageUserInfo) {
     console.error('Failed to save user info to localStorage:', e);
   }
 }
+
+export function getUserInfoFromLocalStorage(
+  userId: number
+): localStorageUserInfo | undefined {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return undefined;
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return undefined;
+
+    const userInfoList: localStorageUserInfo[] = parsed;
+    return userInfoList.find((user) => user.userId === userId);
+  } catch (e) {
+    console.error('Failed to get user info from localStorage:', e);
+    return undefined;
+  }
+}
