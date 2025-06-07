@@ -49,10 +49,6 @@ export function SajuChatWindow({
     setMessages(initialMessages);
   }, [initialMessages]);
 
-  useEffect(() => {
-    console.log(isBotTyping);
-  }, [isBotTyping]);
-
   return (
     <div className='flex h-full flex-col bg-white dark:bg-gray-900'>
       {/* 상단 바 (선택 사항) */}

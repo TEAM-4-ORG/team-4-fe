@@ -9,7 +9,6 @@ import { CreateProjectRequest } from '@/services/project/types';
 import { SajuConsultRequest } from '@/services/saju/types';
 import { getUserInfoFromLocalStorage } from '@/utils/localStorage';
 import { SajuChatWindow } from '@/components/chat/SajuChatWindow';
-import { UseMutationResult } from '@tanstack/react-query';
 
 export default function SajuChatPage() {
   const router = useRouter();
@@ -29,10 +28,8 @@ export default function SajuChatPage() {
     }
   );
 
-  const {
-    mutateAsync: postSajuAsync,
-    isPending: isBotTyping,
-  }: UseMutationResult = useSajuConsult();
+  const { mutateAsync: postSajuAsync, isPending: isBotTyping } =
+    useSajuConsult();
 
   const { mutateAsync: postProjectAsync } = useNewProject();
 

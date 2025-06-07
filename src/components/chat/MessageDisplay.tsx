@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Message } from './ChatWindow';
 import LoadingSpinnerDot from '../LoadingSpinnerDot';
+import ReactMarkdown from 'react-markdown';
 
 interface MessageDisplayProps {
   message: Message;
@@ -30,7 +31,13 @@ export function MessageDisplay({ message, isBotTyping }: MessageDisplayProps) {
             : 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
         }`}
       >
-        {isBotLoading ? <LoadingSpinnerDot /> : <p>{message.text}</p>}
+        {isBotLoading ? (
+          <LoadingSpinnerDot />
+        ) : (
+          <div className='flex flex-col'>
+            <ReactMarkdown>{message.text}</ReactMarkdown>
+          </div>
+        )}
       </div>
 
       {message.sender === 'user' && (
