@@ -25,16 +25,17 @@ interface ChatWindowProps {
   chatType: 'saju' | 'tarot' | 'init'; // 사주 또는 타로 상담 타입
   initialMessages?: Message[]; // 초기 메시지 (기록 불러올 때 사용)
   onSendMessage: (message: string, cardInfo?: TarotCard[]) => Promise<void>; // 카드 정보 추가
+  isLoading?: boolean;
 }
 
 export function ChatWindow({
   chatType,
   initialMessages = [],
   onSendMessage,
+  isLoading = false,
 }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isTarotDialogOpened, setIsTarotDialogOpened] = useState(false); // 다이얼로그 열림/닫힘 상태
   const [selectedTarotCards, setSelectedTarotCards] = useState<TarotCard[]>([]); // 뽑힌 타로 카드 정보
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -72,7 +73,7 @@ export function ChatWindow({
     };
     setMessages((prev) => [...prev, newUserMessage]);
     setInputMessage('');
-    setIsLoading(true);
+    // setIsLoading(true);
 
     try {
       // 카드 정보가 있다면 함께 전송합니다.
@@ -87,7 +88,7 @@ export function ChatWindow({
         description: '챗봇 응답을 가져오는 데 실패했습니다.',
       });
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 
@@ -105,7 +106,7 @@ export function ChatWindow({
     };
     setMessages((prev) => [...prev, newUserMessage]);
     setInputMessage('');
-    setIsLoading(true);
+    // setIsLoading(true);
 
     try {
       await onSendMessage(newUserMessage.text, cards);
@@ -116,7 +117,7 @@ export function ChatWindow({
         description: '챗봇 응답을 가져오는 데 실패했습니다.',
       });
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   };
 

@@ -90,9 +90,13 @@ export type DecadesAnalysis = {
 
 // 사주 데이터 요청 타입
 export interface SajuRequest {
-  birth: string;
-  time: string;
-  gender: boolean; // 성별 (true - 남성 / false - 여성)
+  basicInfo: {
+    birthDate: {
+      birth: string;
+      time: string;
+    };
+    gender: GenderType;
+  };
   sajuPillars: {
     yearPillar: SajuPillar; // 연주(年柱) - 출생 연도의 천간과 지지
     monthPillar: SajuPillar; // 월주(月柱) - 출생 월의 천간과 지지

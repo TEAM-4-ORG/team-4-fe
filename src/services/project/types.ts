@@ -30,5 +30,5 @@ export interface CreateProjectRequest {
 }
 
 export interface CreateProjectResponse extends BasicResponse {
-  result: { title: string };
+  result: { title: string; projectId: number };
 }

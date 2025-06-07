@@ -10,9 +10,11 @@ import {
   ChungAnalysis,
   DecadesAnalysis,
   GenderType,
+  SajuRequest,
 } from '../../../../types/saju';
 import CalFiveElements from '../../analysis/cal_five_elements/cal_five_elements';
 import { sajuData } from '@/pages/mansae';
+import { cn } from '@/lib/utils';
 
 interface ResultDetailProps extends sajuData {
   selectedYear: number;
@@ -20,6 +22,9 @@ interface ResultDetailProps extends sajuData {
   selectedDay: number;
   selectedTime: string;
   selectedGender: GenderType;
+  handleSetSajuData: (data: SajuRequest) => void;
+  setIsSajuDataSettled: (value: boolean) => void;
+  hide?: boolean;
 }
 
 interface AnalysisData {
@@ -68,56 +73,25 @@ const ResultDetail: React.FC<ResultDetailProps> = (props) => {
   };
 
   useEffect(() => {
-    // const sendDataToBackend = async () => {
-    //   // 모든 분석 데이터가 수집되었는지 확인
-    //   if (
-    //     !analysisData.fiveElements ||
-    //     !analysisData.hopData ||
-    //     !analysisData.chungData ||
-    //     !analysisData.decadesData
-    //   ) {
-    //     return;
-    //   }
-
-    //   try {
-    //     setIsLoading(true);
-    //     const formattedData = formatSajuData({
-    //       ...props,
-    //       ...analysisData,
-    //     });
-
-    //     const response = await sendSajuData(formattedData);
-    //     console.log('Successfully sent data to backend:', response);
-    //   } catch (error) {
-    //     console.error('Error sending data to backend:', error);
-    //     setError(
-    //       error instanceof Error
-    //         ? error.message
-    //         : '알 수 없는 에러가 발생했습니다.'
-    //     );
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // };
-
-    // sendDataToBackend();
     const formattedData = formatSajuData({
       ...props,
       ...analysisData,
     });
+    props.handleSetSajuData(formattedData);
+
+    // Check if all analysis data is ready
+    const isAllDataReady =
+      analysisData.fiveElements !== null &&
+      analysisData.hopData !== null &&
+      analysisData.chungData !== null &&
+      analysisData.decadesData !== null;
+
+    props.setIsSajuDataSettled(isAllDataReady);
     console.log('formattedData', formattedData);
-  }, [props, analysisData]);
-
-  // if (isLoading) {
-  //   return <div>데이터를 전송하는 중입니다...</div>;
-  // }
-
-  // if (error) {
-  //   return <div>에러가 발생했습니다: {error}</div>;
-  // }
+  }, [analysisData]);
 
   return (
-    <div>
+    <div className={cn(props.hide && 'hidden')}>
       <ShowHop
         yearSky={props.yearSky}
         yearGround={props.yearGround}

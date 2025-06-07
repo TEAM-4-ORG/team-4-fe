@@ -4,8 +4,9 @@ import {
   UseQueryOptions,
   UseMutationOptions,
 } from '@tanstack/react-query';
-import { projectInfoKey } from './keys';
+import { newProjectKey, projectInfoKey } from './keys';
 import { projectService } from './projectService';
+import { CreateProjectRequest, CreateProjectResponse } from './types';
 
 export const useProjectInfo = (
   projectId: number,
@@ -17,6 +18,19 @@ export const useProjectInfo = (
   useQuery({
     queryKey: projectInfoKey(projectId),
     queryFn: () => projectService.getProject(projectId),
+    ...options,
+  });
+
+export const useNewProject = (
+  options?: Omit<
+    UseMutationOptions<CreateProjectResponse, Error, CreateProjectRequest>,
+    'mutationKey' | 'mutationFn'
+  >
+) =>
+  useMutation({
+    mutationKey: newProjectKey(),
+    mutationFn: (payload: CreateProjectRequest) =>
+      projectService.postProject(payload),
     ...options,
   });
 

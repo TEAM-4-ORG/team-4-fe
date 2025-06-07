@@ -2,12 +2,10 @@ export interface SajuConsultRequest {
   user_id: number;
   project_id: number;
   question: string;
-  saju_data: {
+  sajuData: {
     basicInfo: {
       birthDate: {
-        year: number;
-        month: number;
-        day: number;
+        birth: string;
         time: string;
       };
       gender: '남자' | '여자';

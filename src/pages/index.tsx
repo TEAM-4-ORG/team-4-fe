@@ -12,10 +12,6 @@ export default function HomePage() {
 
   useEffect(() => {
     console.log(userInfoList);
-    // if (userInfoList.length > 0) {
-    //   const latestUser = userInfoList[userInfoList.length - 1];
-    //   router.replace(`/${latestUser?.userId}/saju`);
-    // }
   }, [router, userInfoList]);
 
   //user정보 없는 화면, dialogue 띄우기
@@ -41,7 +37,7 @@ export default function HomePage() {
                 <CalculateMansae type='inline' />
               </div>
             </div>
-            {userInfoList && (
+            {userInfoList.length > 0 && (
               <div className='flex w-full flex-col items-center justify-center gap-5 rounded-2xl bg-white shadow-xl'>
                 <div className='text-center text-xl whitespace-pre'>
                   <p>{`이전에 서비스를 이용했던 경험이 있어요.`}</p>

@@ -31,17 +31,7 @@ export const useCreateUser = (
 ) =>
   useMutation({
     mutationKey: userKeys.create(),
-    // mutationFn: (payload: UserRequest) => userService.createUser(payload),
-    mutationFn: (payload: UserRequest) => {
-      return {
-        isSuccess: true,
-        code: 'COMMON200',
-        message: '유저 추가에 성공했습니다.',
-        result: {
-          user_id: 1,
-        },
-      };
-    },
+    mutationFn: (payload: UserRequest) => userService.createUser(payload),
     ...options,
   });
 

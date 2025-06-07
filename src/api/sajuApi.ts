@@ -1,3 +1,4 @@
+import { formattingDate } from '@/utils/formattingDate';
 import { SajuRequest, SkyType, GroundType } from '../types/saju';
 
 /**
@@ -118,9 +119,13 @@ export const formatSajuData = (props: any): SajuRequest => {
   } = props;
 
   return {
-    birth: `${selectedYear}-${selectedMonth + 1}-${selectedDay}`,
-    time: selectedTime,
-    gender: selectedGender === '남성',
+    basicInfo: {
+      birthDate: {
+        birth: formattingDate(selectedYear, selectedMonth, selectedDay),
+        time: selectedTime,
+      },
+      gender: selectedGender,
+    },
     sajuPillars: {
       yearPillar: {
         sky: yearSky as SkyType,

@@ -17,7 +17,6 @@ class AxiosService {
       headers: {
         'Content-Type': 'application/json',
         csrf: 'token',
-        Referer: base,
       },
       withCredentials: true, // 쿠키 인증 포함
     });
