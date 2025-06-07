@@ -35,10 +35,14 @@ export interface sajuData {
   timeGround: GroundType;
 }
 
-const initialRequestData = {
-  birth: '',
-  time: '',
-  gender: true,
+const initialRequestData: SajuRequest = {
+  basicInfo: {
+    birthDate: {
+      birth: '',
+      time: '',
+    },
+    gender: '여자',
+  },
   sajuPillars: {
     yearPillar: { sky: {} as SkyType, ground: {} as GroundType },
     monthPillar: { sky: {} as SkyType, ground: {} as GroundType },
@@ -86,6 +90,7 @@ function CalculateMansae({
   const [selectedGender, setSelectedGender] = useState<GenderType>('남자');
   const [formattedSajuData, setFormattedSajuData] =
     useState<SajuRequest>(initialRequestData);
+  const [isSajuDataSettled, setIsSajuDataSettled] = useState(false);
 
   const [showResult, setShowResult] = useState(false);
   const [sajuData, setSajuData] = useState<sajuData | null>(null);
@@ -93,7 +98,7 @@ function CalculateMansae({
   const router = useRouter();
 
   const { mutate } = useCreateUser({
-    onSuccess(data) {
+    onSuccess: (data) => {
       saveUserInfoToLocalStorage({
         userId: data.result.user_id,
         info: {
@@ -126,7 +131,7 @@ function CalculateMansae({
       gender: gender === '남자',
     };
     setSelectedYear(year);
-    setSelectedMonth(month - 1);
+    setSelectedMonth(month - 1); //Date 형식이라 -1
     setSelectedDay(day);
     setSelectedTime(time);
     setSelectedGender(gender);
@@ -141,6 +146,31 @@ function CalculateMansae({
   useEffect(() => {
     console.log(formattedSajuData);
   }, [formattedSajuData]);
+
+  useEffect(() => {
+    if (isSajuDataSettled) {
+      saveUserInfoToLocalStorage({
+        userId: Number(router.query.userId) || 0,
+        info: {
+          birthYear: selectedYear,
+          birthMonth: selectedMonth,
+          birthDay: selectedDay,
+          birthTime: selectedTime,
+          gender: selectedGender,
+        },
+        saju: formattedSajuData,
+      });
+    }
+  }, [
+    isSajuDataSettled,
+    formattedSajuData,
+    selectedYear,
+    selectedMonth,
+    selectedDay,
+    selectedTime,
+    selectedGender,
+    router.query.userId,
+  ]);
 
   const buttonTitle = showResult ? '사주 보기' : '사주 입력하기';
 
@@ -173,6 +203,7 @@ function CalculateMansae({
           selectedTime={selectedTime}
           selectedGender={selectedGender}
           handleSetSajuData={setFormattedSajuData}
+          setIsSajuDataSettled={setIsSajuDataSettled}
           hide={type == 'inline'}
         />
       )}
