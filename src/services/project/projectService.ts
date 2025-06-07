@@ -12,7 +12,7 @@ class ProjectService extends AxiosService {
   }
 
   getProject(projectId: number): Promise<ProjectDetailResponse> {
-    return this.http.get(`/${projectId}`);
+    return this.http.get(`/load/${projectId}`);
   }
 
   postProject(payload: CreateProjectRequest): Promise<CreateProjectResponse> {
