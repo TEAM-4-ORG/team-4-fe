@@ -47,6 +47,7 @@ export function SajuChatWindow({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -98,6 +99,7 @@ export function SajuChatWindow({
             placeholder='메시지를 입력하세요...'
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
             className='flex-1'
             disabled={isLoading}
           />
