@@ -2,7 +2,7 @@ export interface SajuConsultRequest {
   user_id: number;
   project_id: number;
   question: string;
-  saju_data: {
+  sajuData: {
     basicInfo: {
       birthDate: {
         birth: string;
