@@ -16,3 +16,14 @@ export interface TarotConsultResponse {
     created_at: string;
   };
 }
+
+export interface SaveTarotCardsRequest {
+  project_id: number;
+  cards: string[];
+}
+
+export interface SaveTarotCardsResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+}

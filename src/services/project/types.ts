@@ -5,9 +5,11 @@ export interface ProjectDetailResponse {
   code: string;
   message: string;
   result: {
-    project_id: number;
-    user_id: number;
+    projectId: number;
+    userId: number;
     title: string;
+    type: projectType;
+    tarotCards: string[] | null;
     consultations: {
       consultation_id: number;
       question: string;
