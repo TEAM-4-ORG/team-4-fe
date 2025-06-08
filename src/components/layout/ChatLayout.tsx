@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu } from 'lucide-react';
+import { Menu, ChevronLeft } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 
 interface Project {
@@ -21,9 +21,30 @@ export function ChatLayout({
   projects,
   hideSideBar = false,
 }: ChatLayoutProps) {
+  const [isSidebarVisible, setIsSidebarVisible] = useState(!hideSideBar);
   return (
     <div className='flex h-screen bg-gray-100 dark:bg-gray-900'>
       {/* 데스크탑 사이드바 */}
+      <div
+        className={`hidden flex-col border-r bg-white transition-all duration-300 md:flex dark:border-gray-800 dark:bg-gray-950 ${isSidebarVisible ? 'w-64' : 'w-16'}`}
+      >
+        {/* 사이드바 토글 버튼 */}
+        <div
+          className={`flex h-16 items-center ${isSidebarVisible ? 'justify-start px-4' : 'justify-center'}`}
+        >
+          <Button
+            variant='ghost'
+            size='icon'
+            className='h-8 w-8'
+            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+          >
+            <ChevronLeft
+              className={`h-4 w-4 transition-transform duration-300 ${isSidebarVisible ? 'rotate-0' : 'rotate-180'}`}
+            />
+          </Button>
+        </div>
+        {isSidebarVisible && <Sidebar projects={projects} />}
+      </div>
       {!hideSideBar && (
         <div className='hidden w-64 flex-col border-r bg-white md:flex dark:border-gray-800 dark:bg-gray-950'>
           <Sidebar projects={projects} />
