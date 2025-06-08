@@ -1,7 +1,4 @@
-import Analysis from '@/components/calculateMansae/analysis/analysis';
-import InputBirthday from '@/components/calculateMansae/input_birthday/input_birthday';
-import FourPillarViewer from '@/components/calculateMansae/result/four_pillar_viewer';
-import ResultDetail from '@/components/calculateMansae/result/result_detail/ResultDetail';
+import ResultContents from '@/components/calculateMansae/result/ResultContents';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -23,17 +20,6 @@ import { saveUserInfoToLocalStorage } from '@/utils/localStorage';
 import { useRouter } from 'next/router';
 
 import { useEffect, useState } from 'react';
-
-export interface sajuData {
-  yearSky: SkyType;
-  yearGround: GroundType;
-  monthSky: SkyType;
-  monthGround: GroundType;
-  daySky: SkyType;
-  dayGround: GroundType;
-  timeSky: SkyType;
-  timeGround: GroundType;
-}
 
 const initialRequestData: SajuRequest = {
   basicInfo: {
@@ -93,7 +79,6 @@ function CalculateMansae({
   const [isSajuDataSettled, setIsSajuDataSettled] = useState(false);
 
   const [showResult, setShowResult] = useState(false);
-  const [sajuData, setSajuData] = useState<sajuData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
   const router = useRouter();
 
@@ -128,12 +113,9 @@ function CalculateMansae({
     mutate(payload);
   };
 
-  const handleAnalysisComplete = (data: sajuData) => {
-    setSajuData(data);
-  };
-
   useEffect(() => {
-    if (createdUser && isSajuDataSettled) {
+    console.log(isSajuDataSettled);
+    if (createdUser) {
       saveUserInfoToLocalStorage({
         userId: data.result.user_id,
         info: {
@@ -160,47 +142,19 @@ function CalculateMansae({
 
   const buttonTitle = showResult ? '사주 보기' : '사주 입력하기';
 
-  const resultContents = (
-    <>
-      <FourPillarViewer
-        selectedYear={selectedYear}
-        selectedMonth={selectedMonth}
-        selectedDay={selectedDay}
-        selectedTime={selectedTime}
-        hide={type == 'inline'}
-      />
-
-      <Analysis
-        selectedYear={selectedYear}
-        selectedMonth={selectedMonth}
-        selectedDay={selectedDay}
-        selectedTime={selectedTime}
-        setSajuData={handleAnalysisComplete}
-        hide={type == 'inline'}
-      />
-
-      {sajuData && (
-        <ResultDetail
-          {...sajuData}
-          selectedYear={selectedYear}
-          selectedMonth={selectedMonth}
-          selectedDay={selectedDay}
-          selectedTime={selectedTime}
-          selectedGender={selectedGender}
-          handleSetSajuData={setFormattedSajuData}
-          setIsSajuDataSettled={setIsSajuDataSettled}
-          hide={type == 'inline'}
-        />
-      )}
-    </>
-  );
-
   if (type === 'inline')
     return (
-      <>
-        <InputBirthday onAdd={onAdd} />
-        {resultContents}
-      </>
+      <ResultContents
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        selectedDay={selectedDay}
+        selectedTime={selectedTime}
+        selectedGender={selectedGender}
+        type={type}
+        handleSetSajuData={setFormattedSajuData}
+        setIsSajuDataSettled={setIsSajuDataSettled}
+        onAdd={onAdd}
+      />
     );
   return (
     <div>
@@ -214,16 +168,20 @@ function CalculateMansae({
           </Button>
         </DialogTrigger>
         <DialogContent className='h-fit'>
-          {sajuData ? (
-            resultContents
-          ) : (
-            <>
-              <DialogHeader>
-                <DialogTitle>사주 정보 입력</DialogTitle>
-              </DialogHeader>
-              <InputBirthday onAdd={onAdd} />
-            </>
-          )}
+          <DialogHeader>
+            <DialogTitle>사주 정보 입력</DialogTitle>
+          </DialogHeader>
+          <ResultContents
+            selectedYear={selectedYear}
+            selectedMonth={selectedMonth}
+            selectedDay={selectedDay}
+            selectedTime={selectedTime}
+            selectedGender={selectedGender}
+            type={type}
+            handleSetSajuData={setFormattedSajuData}
+            setIsSajuDataSettled={setIsSajuDataSettled}
+            onAdd={onAdd}
+          />
         </DialogContent>
       </Dialog>
     </div>
