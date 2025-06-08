@@ -100,8 +100,8 @@ export function QuickMenu({ type, onSelectQuestion }: QuickMenuProps) {
       </div>
       
       {selectedCategory && (
-        <ScrollArea className="h-32">
-          <div className="flex gap-2 pb-2">
+        <ScrollArea className="max-h-[200px]">
+          <div className="flex flex-wrap gap-2 pb-2">
             {questions[selectedCategory].map((question, index) => (
               <Button
                 key={index}
@@ -111,7 +111,8 @@ export function QuickMenu({ type, onSelectQuestion }: QuickMenuProps) {
                   dark:bg-gray-800/50 dark:hover:bg-gray-800/80 
                   shadow-sm hover:shadow-md transition-all duration-200 
                   min-w-[200px] text-sm font-normal
-                  border border-gray-200 dark:border-gray-700"
+                  border border-gray-200 dark:border-gray-700
+                  h-auto py-2"
                 onClick={() => onSelectQuestion(question)}
               >
                 {question}
