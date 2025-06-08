@@ -4,7 +4,7 @@ import { ChatLayout } from '@/components/layout/ChatLayout';
 import { TarotChatWindow, Message, TarotCard } from '@/components/chat/TarotChatWindow';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
-import { useTarotConsult } from '@/services/tarot';
+import { useTarotConsult, useSaveTarotCards } from '@/services/tarot';
 import { useNewProject, useProjectInfo } from '@/services/project';
 import { CreateProjectRequest } from '@/services/project/types';
 import { useUserInfo } from '@/services/user';
@@ -33,8 +33,20 @@ export default function TarotChatPage() {
     }
   );
 
-  const { mutateAsync: sendTarotConsult, isPending: isBotTyping } = useTarotConsult();
+  //사주 응답 요청
+  const { mutateAsync: sendTarotConsult, isPending: isBotTyping } = useTarotConsult(
+    {
+      onSuccess: (data, variables) => {
+        const { project_id } = variables;
+        if (!chatId) {
+          router.replace(`/${userId}/tarot?chatId=${project_id}`);
+        }
+      },
+    }
+  );
+
   const { mutateAsync: createProject } = useNewProject();
+  const { mutateAsync: saveTarotCards } = useSaveTarotCards();
 
   useEffect(() => {
     if (!chatId) {
@@ -45,16 +57,31 @@ export default function TarotChatPage() {
           text: '안녕하세요! 타로 상담을 시작할까요? 궁금한 것을 자유롭게 말씀해주세요.',
         },
       ]);
+      // chatId가 없을 때 카드 정보 초기화
+      setInitialCards([]);
     }
 
     if (projectInfoIsSuccess) {
       const consultations = projectInfo.result.consultations;
-      const lastConsultation = consultations[consultations.length - 1];
-      //이후 API수정 되면 카드 정보 받아오는 로직 수정 필요
-      const initialCards = lastConsultation?.cards?.map((card: string) => ({
+
+      // tarotCards가 문자열로 오는 경우를 처리
+      let tarotCardsArray: string[] = [];
+      if (projectInfo.result.tarotCards) {
+        try {
+          // 문자열에서 대괄호와 공백을 제거하고 쉼표로 분리
+          tarotCardsArray = projectInfo.result.tarotCards
+            .replace(/[\[\]]/g, '')
+            .split(',')
+            .map(card => card.trim());
+        } catch (error) {
+          console.error('타로 카드 파싱 에러:', error);
+        }
+      }
+
+      const initialCards = tarotCardsArray.map((card: string) => ({
         id: card,
         name: card,
-      })) || [];
+      }));
 
       const messages: Message[] = consultations.flatMap((item: Consultation) => [
         {
@@ -105,15 +132,25 @@ export default function TarotChatPage() {
       const response = await createProject(projectRequest);
       currentProjectId = response.result.projectId.toString();
 
-      // URL 업데이트
-      router.replace(`/${userId}/tarot?chatId=${currentProjectId}`);
-      toast.success('새로운 프로젝트가 생성되었습니다!', { id: 'createProject' });
+      // 카드 정보가 있다면 저장
+      if (cardInfo && cardInfo.length > 0) {
+        try {
+          await saveTarotCards({
+            project_id: Number(currentProjectId),
+            cards: cardInfo.map(card => card.name)
+          });
+        } catch (error) {
+          console.error('타로 카드 저장 에러:', error);
+          toast.error('타로 카드 저장 실패', {
+            description: '타로 카드 정보 저장에 실패했습니다.',
+          });
+        }
+      }
     }
 
     const payload = {
       user_id: Number(userId),
       project_id: Number(currentProjectId),
-      cards: cardInfo ? cardInfo.map(card => card.name) : [],
       question: userMessage,
     };
 

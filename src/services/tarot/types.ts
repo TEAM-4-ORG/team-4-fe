@@ -1,7 +1,6 @@
 export interface TarotConsultRequest {
   user_id: number;
   project_id: number;
-  cards: string[];
   question: string;
 }
 
