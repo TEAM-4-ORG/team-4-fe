@@ -64,7 +64,7 @@ function CalculateMansae({
   birthMonth?: number;
   birthDay?: number;
   birthTime?: string;
-  gender: GenderType;
+  gender?: GenderType;
 }) {
   const today = {
     year: new Date().getFullYear(),
