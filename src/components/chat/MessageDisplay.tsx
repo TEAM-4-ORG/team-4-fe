@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Message } from './ChatWindow';
+import { Message } from './TarotChatWindow';
 import LoadingSpinnerDot from '../LoadingSpinnerDot';
 import ReactMarkdown from 'react-markdown';
 
@@ -25,11 +25,10 @@ export function MessageDisplay({ message, isBotTyping }: MessageDisplayProps) {
       )}
 
       <div
-        className={`flex max-w-[70%] items-center justify-center rounded-lg p-3 ${
-          message.sender === 'user'
-            ? 'bg-blue-500 text-white'
-            : 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
-        }`}
+        className={`flex max-w-[70%] items-center justify-center rounded-lg p-3 ${message.sender === 'user'
+          ? 'bg-blue-500 text-white'
+          : 'bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
+          }`}
       >
         {isBotLoading ? (
           <LoadingSpinnerDot />

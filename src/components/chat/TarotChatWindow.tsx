@@ -1,4 +1,3 @@
-// components/chat/ChatWindow.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +20,7 @@ export interface TarotCard {
   name: string;
 }
 
-interface ChatWindowProps {
+interface TarotChatWindowProps {
   chatType: 'saju' | 'tarot' | 'init'; // 사주 또는 타로 상담 타입
   initialMessages?: Message[]; // 초기 메시지 (기록 불러올 때 사용)
   initialCards?: TarotCard[]; // 초기 카드 정보 (기록 불러올 때 사용)
@@ -30,14 +29,14 @@ interface ChatWindowProps {
   isBotTyping?: boolean;
 }
 
-export function ChatWindow({
+export function TarotChatWindow({
   chatType,
   initialMessages = [],
   initialCards = [],
   onSendMessage,
   isLoading = false,
   isBotTyping = false,
-}: ChatWindowProps) {
+}: TarotChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isTarotDialogOpened, setIsTarotDialogOpened] = useState(false); // 다이얼로그 열림/닫힘 상태

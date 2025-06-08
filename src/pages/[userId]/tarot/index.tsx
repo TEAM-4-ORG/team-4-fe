@@ -1,7 +1,7 @@
 // pages/tarot/index.tsx
 import { useState, useEffect } from 'react';
 import { ChatLayout } from '@/components/layout/ChatLayout';
-import { ChatWindow, Message, TarotCard } from '@/components/chat/ChatWindow';
+import { TarotChatWindow, Message, TarotCard } from '@/components/chat/TarotChatWindow';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
 import { useTarotConsult } from '@/services/tarot';
@@ -150,7 +150,7 @@ export default function TarotChatPage() {
 
   return (
     <ChatLayout projects={userInfo?.projects}>
-      <ChatWindow
+      <TarotChatWindow
         chatType="tarot"
         initialMessages={messages}
         initialCards={initialCards}
