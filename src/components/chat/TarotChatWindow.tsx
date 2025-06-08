@@ -62,7 +62,7 @@ export function TarotChatWindow({
     if (inputMessage.trim() === '' || isLoading) return;
 
     // 타로 상담이고 아직 카드를 뽑지 않았으며, 기존 선택된 카드도 없는 경우에만 다이얼로그를 엽니다.
-    if (chatType === 'tarot' && selectedTarotCards.length === 0) {
+    if (chatType === 'tarot' && selectedTarotCards.length === 0 && initialCards.length === 0) {
       setIsTarotDialogOpened(true);
       return;
     }
@@ -77,10 +77,11 @@ export function TarotChatWindow({
     setInputMessage('');
 
     try {
-      // 기존에 선택된 카드가 있다면 그대로 사용하고, 없다면 undefined 전달
+      // 기존에 선택된 카드가 있다면 그대로 사용하고, 없다면 initialCards 사용
+      const cardsToUse = selectedTarotCards.length > 0 ? selectedTarotCards : initialCards;
       await onSendMessage(
         inputMessage,
-        selectedTarotCards.length > 0 ? selectedTarotCards : undefined
+        cardsToUse.length > 0 ? cardsToUse : undefined
       );
       // 카드 정보는 초기화하지 않음 (기존 카드 정보 유지)
     } catch (error) {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Plus,
@@ -33,14 +33,29 @@ interface SidebarProps {
   onProjectDeleted?: () => void;
 }
 
-export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
+export function Sidebar({
+  projects: initialProjects,
+  onProjectDeleted,
+}: SidebarProps) {
   const router = useRouter();
   const { userId } = router.query;
+  const [projects, setProjects] = useState<Project[]>(initialProjects || []);
+
+  useEffect(() => {
+    if (initialProjects) {
+      setProjects(initialProjects);
+    }
+  }, [initialProjects]);
 
   const handleDeleteProject = async (projectId: number) => {
     try {
       const response = await projectService.deleteProject(projectId);
       if (response.isSuccess) {
+        setProjects(
+          projects.filter(
+            (project: Project) => project.project_id !== projectId
+          )
+        );
         toast.success('프로젝트가 삭제되었습니다.');
         if (onProjectDeleted) {
           onProjectDeleted();

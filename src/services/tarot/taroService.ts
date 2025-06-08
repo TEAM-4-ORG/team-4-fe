@@ -1,5 +1,5 @@
 import AxiosService from '../api/axiosService';
-import { TarotConsultRequest, TarotConsultResponse } from './types';
+import { TarotConsultRequest, TarotConsultResponse, SaveTarotCardsRequest, SaveTarotCardsResponse } from './types';
 
 class TarotService extends AxiosService {
   constructor() {
@@ -7,6 +7,10 @@ class TarotService extends AxiosService {
   }
   consult(payload: TarotConsultRequest): Promise<TarotConsultResponse> {
     return this.http.post('/consult', payload);
+  }
+
+  saveCards(payload: SaveTarotCardsRequest): Promise<SaveTarotCardsResponse> {
+    return this.http.post('/save', payload);
   }
 }
 
