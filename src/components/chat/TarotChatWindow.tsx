@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { MessageDisplay } from './MessageDisplay'; // 메시지 렌더링 컴포넌트 추가
 import { Dialog } from '@/components/ui/dialog'; // Shadcn Dialog 임포트
 import { TarotSimulatorDialog } from './TarotSimulatorDialog'; // 새롭게 생성할 타로 시뮬레이터 컴포넌트 임포트
+import { QuickMenu } from './QuickMenu';
 
 export interface Message {
   id: string;
@@ -43,13 +44,16 @@ export function TarotChatWindow({
   const [selectedTarotCards, setSelectedTarotCards] = useState<TarotCard[]>(initialCards); // 초기 카드 정보로 설정
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
+  // 메시지가 추가될 때마다 스크롤을 맨 아래로 이동
   useEffect(() => {
-    // 메시지가 추가될 때마다 스크롤을 맨 아래로 이동
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
     }
   }, [messages]);
 
@@ -165,6 +169,12 @@ export function TarotChatWindow({
           )}
         </div>
       </ScrollArea>
+
+      {/* 퀵 메뉴 */}
+      <QuickMenu
+        type="tarot"
+        onSelectQuestion={(question) => setInputMessage(question)}
+      />
 
       {/* 메시지 입력 영역 */}
       <form
