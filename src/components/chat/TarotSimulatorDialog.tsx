@@ -91,61 +91,63 @@ export function TarotSimulatorDialog({ onCardsSelected, onClose }: TarotSimulato
   }, [currentSelectedCards, onCardsSelected, onClose]);
 
   return (
-    <DialogContent className="sm:max-w-[900px] lg:max-w-[1200px] h-[1200px] flex flex-col">
+    <DialogContent className="sm:max-w-[900px] lg:max-w-[1200px] max-h-[90vh] flex flex-col">
       <DialogHeader>
         <DialogTitle>타로 카드 뽑기</DialogTitle>
         <DialogDescription>
           Unity 시뮬레이터에서 타로 카드를 3장 뽑아주세요.
         </DialogDescription>
       </DialogHeader>
-      <div className="flex-1 flex flex-col items-center justify-center p-2 overflow-hidden">
-        {/* Unity WebGL 컨테이너 및 로딩 메시지 */}
-        {!isLoaded && ( // isLoaded를 사용하여 로딩 상태를 확인합니다.
-          <div className="text-center text-gray-500 mb-4">
-            <p>타로 시뮬레이터 로딩 중... ({Math.round(loadingProgression * 100)}%)</p>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
-              <div
-                className="bg-blue-600 h-2.5 rounded-full"
-                style={{ width: `${Math.round(loadingProgression * 100)}%` }}
-              ></div>
+      <div className="flex-1 overflow-y-auto p-2">
+        <div className="flex flex-col items-center justify-center">
+          {/* Unity WebGL 컨테이너 및 로딩 메시지 */}
+          {!isLoaded && ( // isLoaded를 사용하여 로딩 상태를 확인합니다.
+            <div className="text-center text-gray-500 mb-4">
+              <p>타로 시뮬레이터 로딩 중... ({Math.round(loadingProgression * 100)}%)</p>
+              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
+                <div
+                  className="bg-blue-600 h-2.5 rounded-full"
+                  style={{ width: `${Math.round(loadingProgression * 100)}%` }}
+                ></div>
+              </div>
             </div>
-          </div>
-        )}
-        <Unity
-          unityProvider={unityProvider}
-          style={{ width: 960, height: 600, border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-        />
+          )}
+          <Unity
+            unityProvider={unityProvider}
+            style={{ width: 960, height: 600, border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+          />
 
-        {/* 뽑은 카드 이름 표시 */}
-        {isLoaded && currentSelectedCards.length > 0 && (
-          <div className="mt-4 text-center">
-            <h3 className="text-lg font-semibold mb-2">뽑은 카드:</h3>
-            <div className="flex justify-center gap-4 flex-wrap">
-              {currentSelectedCards.map((card) => (
-                <span
-                  key={card.id}
-                  className="inline-block bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 text-sm font-medium px-2.5 py-0.5 rounded-full"
-                >
-                  {card.name}
-                </span>
-              ))}
+          {/* 뽑은 카드 이름 표시 */}
+          {isLoaded && currentSelectedCards.length > 0 && (
+            <div className="mt-4 text-center">
+              <h3 className="text-lg font-semibold mb-2">뽑은 카드:</h3>
+              <div className="flex justify-center gap-4 flex-wrap">
+                {currentSelectedCards.map((card) => (
+                  <span
+                    key={card.id}
+                    className="inline-block bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 text-sm font-medium px-2.5 py-0.5 rounded-full"
+                  >
+                    {card.name}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-        {isLoaded && currentSelectedCards.length === 0 && (
-          <div className="mt-4 text-center text-gray-500">
-            <p>카드를 3장 뽑아주세요.</p>
-          </div>
-        )}
+          )}
+          {isLoaded && currentSelectedCards.length === 0 && (
+            <div className="mt-4 text-center text-gray-500">
+              <p>카드를 3장 뽑아주세요.</p>
+            </div>
+          )}
+        </div>
       </div>
-      <DialogFooter className="flex justify-end p-4">
+      <DialogFooter className="flex justify-end p-4 border-t mt-4">
         <Button
           onClick={handleSubmitCards}
           disabled={currentSelectedCards.length !== 3} // 3개 카드를 뽑아야 활성화
         >
           선택 완료 및 메시지 전송
         </Button>
-        <Button variant="outline" onClick={onClose}>
+        <Button variant="outline" onClick={onClose} className="ml-2">
           취소
         </Button>
       </DialogFooter>
