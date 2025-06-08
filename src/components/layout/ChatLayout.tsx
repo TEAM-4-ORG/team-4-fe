@@ -29,28 +29,24 @@ export function ChatLayout({
         className={`hidden flex-col border-r bg-white transition-all duration-300 md:flex dark:border-gray-800 dark:bg-gray-950 ${isSidebarVisible ? 'w-64' : 'w-16'}`}
       >
         {/* 사이드바 토글 버튼 */}
-        <div
-          className={`flex h-16 items-center ${isSidebarVisible ? 'justify-start px-4' : 'justify-center'}`}
-        >
-          <Button
-            variant='ghost'
-            size='icon'
-            className='h-8 w-8'
-            onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+        {!hideSideBar && (
+          <div
+            className={`flex h-16 items-center ${isSidebarVisible ? 'justify-start px-4' : 'justify-center'}`}
           >
-            <ChevronLeft
-              className={`h-4 w-4 transition-transform duration-300 ${isSidebarVisible ? 'rotate-0' : 'rotate-180'}`}
-            />
-          </Button>
-        </div>
+            <Button
+              variant='ghost'
+              size='icon'
+              className='h-8 w-8'
+              onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+            >
+              <ChevronLeft
+                className={`h-4 w-4 transition-transform duration-300 ${isSidebarVisible ? 'rotate-0' : 'rotate-180'}`}
+              />
+            </Button>
+          </div>
+        )}
         {isSidebarVisible && <Sidebar projects={projects} />}
       </div>
-      {!hideSideBar && (
-        <div className='hidden w-64 flex-col border-r bg-white md:flex dark:border-gray-800 dark:bg-gray-950'>
-          <Sidebar projects={projects} />
-        </div>
-      )}
-
       {/* 모바일 사이드바 토글 버튼 */}
       <Sheet>
         <SheetTrigger asChild className='absolute top-4 left-4 z-10 md:hidden'>

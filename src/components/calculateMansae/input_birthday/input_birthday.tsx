@@ -1,8 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DialogFooter } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import { GenderType } from '@/types/saju';
 
 interface InputBirthdayProps {
@@ -15,97 +25,139 @@ interface InputBirthdayProps {
   ) => void;
 }
 
-const InputBirthday: React.FC<InputBirthdayProps> = ({ onAdd }) => {
-  const [year, setYear] = useState('');
-  const [month, setMonth] = useState('');
-  const [day, setDay] = useState('');
-  const [time, setTime] = useState('09:50');
-  const [gender, setGender] = useState<GenderType>('남자');
+const birthdaySchema = z
+  .object({
+    year: z
+      .string()
+      .min(4, '년도는 4자리여야 합니다')
+      .refine((val) => +val >= 1900 && +val <= new Date().getFullYear(), {
+        message: '올바른 년도를 입력해주세요',
+      }),
+    month: z
+      .string()
+      .min(1, '월을 입력해주세요')
+      .refine((val) => +val >= 1 && +val <= 12, {
+        message: '1부터 12 사이의 월을 입력해주세요',
+      }),
+    day: z
+      .string()
+      .min(1, '일을 입력해주세요')
+      .refine((val) => +val >= 1 && +val <= 31, {
+        message: '1부터 31 사이의 일을 입력해주세요',
+      }),
+    time: z
+      .string()
+      .refine(
+        (val) => {
+          const selected = new Date(`2000-01-01T${val}`);
+          const now = new Date();
+          return selected <= now;
+        },
+        { message: '미래 시간은 선택할 수 없습니다' }
+      ),
+  })
+  .required();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (year && month && day) {
-      onAdd(parseInt(year), parseInt(month) - 1, parseInt(day), time, gender);
-    }
+export default function InputBirthday({ onAdd }: InputBirthdayProps) {
+  const form = useForm({
+    resolver: zodResolver(birthdaySchema),
+    defaultValues: {
+      year: '',
+      month: '',
+      day: '',
+      time: '00:00',
+    },
+  });
+
+  const [gender, setGender] = React.useState<GenderType>('남자');
+
+  const onSubmit = (data: z.infer<typeof birthdaySchema>) => {
+    const { year, month, day, time } = data;
+    onAdd(parseInt(year), parseInt(month) - 1, parseInt(day), time, gender);
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-4'>
-      <div className='grid grid-cols-2 gap-4'>
-        <div className='space-y-2'>
-          <Label htmlFor='year'>년도</Label>
-          <Input
-            id='year'
-            type='number'
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            placeholder='예: 1990'
-            required
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+        <div className='grid grid-cols-2 gap-4'>
+          <FormField
+            control={form.control}
+            name='year'
+            render={({ field }) => (
+              <FormItem>
+                <Label htmlFor='year'>년도</Label>
+                <FormControl>
+                  <Input id='year' type='number' placeholder='예: 1990' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='month'
+            render={({ field }) => (
+              <FormItem>
+                <Label htmlFor='month'>월</Label>
+                <FormControl>
+                  <Input id='month' type='number' placeholder='1-12' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='day'
+            render={({ field }) => (
+              <FormItem>
+                <Label htmlFor='day'>일</Label>
+                <FormControl>
+                  <Input id='day' type='number' placeholder='1-31' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='time'
+            render={({ field }) => (
+              <FormItem>
+                <Label htmlFor='time'>시간</Label>
+                <FormControl>
+                  <Input id='time' type='time' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
-        <div className='space-y-2'>
-          <Label htmlFor='month'>월</Label>
-          <Input
-            id='month'
-            type='number'
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-            placeholder='1-12'
-            min='1'
-            max='12'
-            required
-          />
-        </div>
-        <div className='space-y-2'>
-          <Label htmlFor='day'>일</Label>
-          <Input
-            id='day'
-            type='number'
-            value={day}
-            onChange={(e) => setDay(e.target.value)}
-            placeholder='1-31'
-            min='1'
-            max='31'
-            required
-          />
-        </div>
-        <div className='space-y-2'>
-          <Label htmlFor='time'>시간</Label>
-          <Input
-            id='time'
-            type='time'
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            required
-          />
-        </div>
-      </div>
 
-      <div className='space-y-2'>
-        <Label>성별</Label>
-        <div className='flex gap-4'>
-          <Button
-            type='button'
-            variant={gender === '남자' ? 'default' : 'outline'}
-            onClick={() => setGender('남자')}
-          >
-            남자
-          </Button>
-          <Button
-            type='button'
-            variant={gender === '여자' ? 'default' : 'outline'}
-            onClick={() => setGender('여자')}
-          >
-            여자
-          </Button>
+        <div className='space-y-2'>
+          <Label>성별</Label>
+          <div className='flex gap-4'>
+            <Button
+              type='button'
+              variant={gender === '남자' ? 'default' : 'outline'}
+              onClick={() => setGender('남자')}
+            >
+              남자
+            </Button>
+            <Button
+              type='button'
+              variant={gender === '여자' ? 'default' : 'outline'}
+              onClick={() => setGender('여자')}
+            >
+              여자
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <DialogFooter>
-        <Button type='submit'>사주 입력하기</Button>
-      </DialogFooter>
-    </form>
+        <DialogFooter>
+          <Button type='submit'>사주 입력하기</Button>
+        </DialogFooter>
+      </form>
+    </Form>
   );
-};
-
-export default InputBirthday;
+}
