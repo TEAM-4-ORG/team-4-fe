@@ -69,6 +69,16 @@ export function QuickMenu({ type, onSelectQuestion }: QuickMenuProps) {
 
   return (
     <div className="border-t border-b p-4 dark:border-gray-800 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="mb-4 space-y-2">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          아래 추천 질문을 통해 더 빠르고 정확한 결과를 얻어보세요!
+        </p>
+        {type === 'tarot' && (
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            새로운 타로카드를 뽑고 싶으시면 좌측 상단의 '새로운 타로 상담' 버튼을 클릭해주세요.
+          </p>
+        )}
+      </div>
       <div className="flex gap-2 mb-4">
         {Object.keys(questions).map((category) => (
           <Button
