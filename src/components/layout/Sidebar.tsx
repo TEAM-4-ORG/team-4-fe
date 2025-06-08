@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 import {
   Plus,
   Settings,
@@ -78,8 +79,11 @@ export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
 
   return (
     <div className='flex h-full flex-col p-4'>
-      <div className='mb-6 flex items-center justify-between'>
-        <h1 className='text-2xl font-bold'>궁금해</h1> {/* 앱 이름 변경 */}
+      <div className='m-2 flex items-center justify-between'>
+        <h1 className='relative left-[-30px] h-[50px] w-[120px]'>
+          <Image src='/logo.png' alt='운세미로' fill className='object-cover' />
+        </h1>
+        {/* 앱 이름 변경 */}
         <CalculateMansae {...userInfo} />
       </div>
 
