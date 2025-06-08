@@ -97,24 +97,13 @@ function CalculateMansae({
   const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
   const router = useRouter();
 
-  const { mutate } = useCreateUser({
+  const {
+    data,
+    mutate,
+    isSuccess: createdUser,
+  } = useCreateUser({
     onSuccess: (data) => {
-      saveUserInfoToLocalStorage({
-        userId: data.result.user_id,
-        info: {
-          birthYear: selectedYear,
-          birthMonth: selectedMonth,
-          birthDay: selectedDay,
-          birthTime: selectedTime,
-          gender: selectedGender,
-        },
-        saju: formattedSajuData,
-      });
-
       router.replace(`${data.result.user_id}/saju`);
-    },
-    onSettled(data) {
-      console.log(data);
     },
   });
 
@@ -131,7 +120,7 @@ function CalculateMansae({
       gender: gender === '남자',
     };
     setSelectedYear(year);
-    setSelectedMonth(month - 1); //Date 형식이라 -1
+    setSelectedMonth(month);
     setSelectedDay(day);
     setSelectedTime(time);
     setSelectedGender(gender);
@@ -144,13 +133,9 @@ function CalculateMansae({
   };
 
   useEffect(() => {
-    console.log(formattedSajuData);
-  }, [formattedSajuData]);
-
-  useEffect(() => {
-    if (isSajuDataSettled) {
+    if (createdUser && isSajuDataSettled) {
       saveUserInfoToLocalStorage({
-        userId: Number(router.query.userId) || 0,
+        userId: data.result.user_id,
         info: {
           birthYear: selectedYear,
           birthMonth: selectedMonth,
@@ -169,7 +154,8 @@ function CalculateMansae({
     selectedDay,
     selectedTime,
     selectedGender,
-    router.query.userId,
+    data,
+    createdUser,
   ]);
 
   const buttonTitle = showResult ? '사주 보기' : '사주 입력하기';
@@ -189,8 +175,7 @@ function CalculateMansae({
         selectedMonth={selectedMonth}
         selectedDay={selectedDay}
         selectedTime={selectedTime}
-        selectedGender={selectedGender}
-        onAnalysisComplete={handleAnalysisComplete}
+        setSajuData={handleAnalysisComplete}
         hide={type == 'inline'}
       />
 

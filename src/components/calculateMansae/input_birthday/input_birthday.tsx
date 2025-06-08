@@ -25,7 +25,7 @@ const InputBirthday: React.FC<InputBirthdayProps> = ({ onAdd }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (year && month && day) {
-      onAdd(parseInt(year), parseInt(month), parseInt(day), time, gender);
+      onAdd(parseInt(year), parseInt(month) - 1, parseInt(day), time, gender);
     }
   };
 
