@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { TarotCard } from './ChatWindow'; // ChatWindow에서 정의한 TarotCard 인터페이스 임포트
+import { TarotCard } from './TarotChatWindow';
 import { Unity, useUnityContext } from 'react-unity-webgl'; // react-unity-webgl에서 Unity와 useUnityContext 임포트
 
 interface TarotSimulatorDialogProps {
