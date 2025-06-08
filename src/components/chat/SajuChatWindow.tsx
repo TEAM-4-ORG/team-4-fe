@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Sparkles } from 'lucide-react';
 import { MessageDisplay } from './MessageDisplay'; // 메시지 렌더링 컴포넌트 추가
+import { QuickMenu } from './QuickMenu';
 
 export interface Message {
   id: string;
@@ -29,12 +30,14 @@ export function SajuChatWindow({
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 메시지가 추가될 때마다 스크롤을 맨 아래로 이동
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
     }
   }, [messages]);
 
@@ -77,6 +80,13 @@ export function SajuChatWindow({
           ))}
         </div>
       </ScrollArea>
+
+      {/* 퀵 메뉴 */}
+      <QuickMenu
+        type="saju"
+        onSelectQuestion={(question) => setInputMessage(question)}
+      />
+
       {/* 메시지 입력 영역 */}
       <form
         onSubmit={(e) => {
