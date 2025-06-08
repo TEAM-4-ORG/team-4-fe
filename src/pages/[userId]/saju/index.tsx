@@ -9,7 +9,6 @@ import { CreateProjectRequest } from '@/services/project/types';
 import { SajuConsultRequest } from '@/services/saju/types';
 import { SajuChatWindow } from '@/components/chat/SajuChatWindow';
 import { useQueryClient } from '@tanstack/react-query';
-import { userKeys } from '@/services/user/keys';
 
 export default function SajuChatPage() {
   const router = useRouter();

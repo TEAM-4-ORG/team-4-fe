@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Plus,
@@ -12,7 +12,6 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import CalculateMansae from '../calculateMansae';
-import { projectService } from '@/services/project/projectService';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +20,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { getUserInfoFromLocalStorage } from '@/utils/localStorage';
+import { useDeleteProject } from '@/services/project';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Project {
   project_id: number;
@@ -33,41 +34,25 @@ interface SidebarProps {
   onProjectDeleted?: () => void;
 }
 
-export function Sidebar({
-  projects: initialProjects,
-  onProjectDeleted,
-}: SidebarProps) {
+export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
   const router = useRouter();
   const { userId } = router.query;
-  const [projects, setProjects] = useState<Project[]>(initialProjects || []);
 
-  useEffect(() => {
-    if (initialProjects) {
-      setProjects(initialProjects);
-    }
-  }, [initialProjects]);
+  const queryClient = useQueryClient();
 
-  const handleDeleteProject = async (projectId: number) => {
-    try {
-      const response = await projectService.deleteProject(projectId);
-      if (response.isSuccess) {
-        setProjects(
-          projects.filter(
-            (project: Project) => project.project_id !== projectId
-          )
-        );
-        toast.success('프로젝트가 삭제되었습니다.');
-        if (onProjectDeleted) {
-          onProjectDeleted();
-        }
-      } else {
-        toast.error(response.message || '프로젝트 삭제에 실패했습니다.');
-      }
-    } catch (error) {
-      toast.error('프로젝트 삭제 중 오류가 발생했습니다.');
-      console.error('프로젝트 삭제 에러:', error);
-    }
-  };
+  const { mutateAsync: handleDeleteProject } = useDeleteProject({
+    onSuccess() {
+      toast.success('프로젝트가 삭제되었습니다.');
+      queryClient.invalidateQueries({
+        queryKey: ['user', 'info'],
+      });
+      router.replace(`/${userId}/saju`);
+      onProjectDeleted?.();
+    },
+    onError() {
+      toast.error('프로젝트 삭제에 실패했습니다.');
+    },
+  });
 
   if (!userId) return; //TODO: 방어로직
 
