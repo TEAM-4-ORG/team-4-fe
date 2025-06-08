@@ -8,16 +8,18 @@ import { useNewProject, useProjectInfo } from '@/services/project';
 import { CreateProjectRequest } from '@/services/project/types';
 import { SajuConsultRequest } from '@/services/saju/types';
 import { SajuChatWindow } from '@/components/chat/SajuChatWindow';
+import { useQueryClient } from '@tanstack/react-query';
+import { userKeys } from '@/services/user/keys';
 
 export default function SajuChatPage() {
   const router = useRouter();
   const { chatId, userId } = router.query;
   const [messages, setMessages] = useState<Message[]>([]);
 
+  const queryClient = useQueryClient();
+
   // fetch sidebar
-  const { data: userInfo } = useUserInfo(Number(userId), {
-    enabled: !!userId,
-  });
+  const { data: userInfo } = useUserInfo(Number(userId));
 
   //chatId 있으면 fetch proejct (대화 기록들)
   const { data: projectInfo, isSuccess: projectInfoIsSuccess } = useProjectInfo(
@@ -30,7 +32,7 @@ export default function SajuChatPage() {
   //사주 응답 요청
   const { mutateAsync: postSajuAsync, isPending: isBotTyping } = useSajuConsult(
     {
-      onSuccess: (data, variables) => {
+      onSuccess: async (data, variables) => {
         const { project_id } = variables;
         if (!chatId) {
           router.replace(`/${userId}/saju?chatId=${project_id}`);
@@ -40,7 +42,13 @@ export default function SajuChatPage() {
   );
 
   //사주 요청 처음이면 Project 생성 (chatId 반환)
-  const { mutateAsync: postProjectAsync } = useNewProject();
+  const { mutateAsync: postProjectAsync } = useNewProject({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['user', 'info'],
+      });
+    },
+  });
 
   useEffect(() => {
     if (!chatId) {
@@ -136,6 +144,10 @@ export default function SajuChatPage() {
       );
     }
   };
+
+  useEffect(() => {
+    console.log(userInfo?.projects);
+  }, [userInfo?.projects]);
 
   return (
     <ChatLayout projects={userInfo?.projects}>

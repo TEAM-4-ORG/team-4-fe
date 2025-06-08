@@ -1,20 +1,24 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 interface QueryProviderProps {
   children: React.ReactNode;
 }
 
-export default function QueryProvider({ children }: QueryProviderProps) {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 1000 * 20,
-      },
+const develop_mode = false;
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 20,
     },
-  });
-
+  },
+});
+export default function QueryProvider({ children }: QueryProviderProps) {
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      {develop_mode && <ReactQueryDevtools initialIsOpen={false} />}
+      {children}
+    </QueryClientProvider>
   );
 }
