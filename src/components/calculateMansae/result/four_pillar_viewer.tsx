@@ -70,167 +70,112 @@ const FourPillarViewer = ({
   );
   const timeGround = logic.returnTimeGround(selectedTime);
 
-  // const [detailKey, setDetailKey] = useState(false);
-
-  // const showDetail = () => {
-  //   if (!detailKey) {
-  //     setDetailKey(true);
-  //     console.log(detailKey + '토글완');
-  //   } else {
-  //     setDetailKey(false);
-  //     console.log(detailKey + '토글완');
-  //   }
-  // };
-
   return (
-    <div className={cn('w-[87%] bg-white shadow-lg', hide && 'hidden')}>
-      <table className='w-full'>
-        <thead>
-          <tr>
-            <th>시</th>
-            <th>일</th>
-            <th>월</th>
-            <th>연</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <CalculateFamily daySky={daySky} sky={timeSky}></CalculateFamily>
-            </td>
-            <td>아신</td>
-            <td>
-              <CalculateFamily daySky={daySky} sky={monthSky}></CalculateFamily>
-            </td>
-            <td>
-              <CalculateFamily daySky={daySky} sky={yearSky}></CalculateFamily>
-            </td>
-          </tr>
+    <div
+      className={cn(
+        'mx-auto w-full max-w-4xl overflow-hidden rounded-xl bg-white p-4 text-center shadow-md',
+        hide && 'hidden'
+      )}
+    >
+      <div className='grid grid-cols-4 border-b pb-2 text-center text-sm font-medium text-gray-500'>
+        <div>시</div>
+        <div>일</div>
+        <div>월</div>
+        <div>연</div>
+      </div>
 
-          <tr className='text-[3.5rem]'>
-            <td className={bgColorMap[timeSky.color]}>
-              <span>{timeSky.code}</span>
-            </td>
-            <td className={bgColorMap[daySky.color]}>
-              <span>{daySky.code}</span>
-            </td>
-            <td className={bgColorMap[monthSky.color]}>
-              <span>{monthSky.code}</span>
-            </td>
-            <td className={bgColorMap[yearSky.color]}>
-              <span>{yearSky.code}</span>
-            </td>
-          </tr>
+      {/* 천간 (위줄) */}
+      <div className='mt-4 grid grid-cols-4 text-3xl font-bold'>
+        {[timeSky, daySky, monthSky, yearSky].map((sky, i) => (
+          <div
+            key={i}
+            className={cn('rounded-md py-2 text-white', bgColorMap[sky.color])}
+          >
+            {sky.name}
+            {sky.code}
+            <span className='text-xs'>({sky.symbol})</span>
+          </div>
+        ))}
+      </div>
+      {/* 십성 텍스트 */}
+      <div className='mt-2 grid grid-cols-4 text-xs text-gray-600'>
+        {[timeSky, daySky, monthSky, yearSky].map((sky, i) => (
+          <div key={i}>
+            <CalculateFamily daySky={daySky} sky={sky} />
+          </div>
+        ))}
+      </div>
 
-          <tr className='text-[3.5rem]'>
-            <td className={bgColorMap[timeGround.color]}>
-              <span>{timeGround.code}</span>
-            </td>
-            <td className={bgColorMap[dayGround.color]}>
-              <span>{dayGround.code}</span>
-            </td>
-            <td className={bgColorMap[monthGround.color]}>
-              <span>{monthGround.code}</span>
-            </td>
-            <td className={bgColorMap[yearGround.color]}>
-              <span>{yearGround.code}</span>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span>
-                <CalculateInnerAttri ground={timeGround} daySky={daySky} />
-              </span>
-            </td>
-            <td>
-              <span>
-                <CalculateInnerAttri ground={dayGround} daySky={daySky} />
-              </span>
-            </td>
-            <td>
-              <span>
-                <CalculateInnerAttri ground={monthGround} daySky={daySky} />
-              </span>
-            </td>
-            <td>
-              {' '}
-              <span>
-                <CalculateInnerAttri ground={yearGround} daySky={daySky} />
-              </span>
-            </td>
-          </tr>
+      {/* 지지 (아래줄) */}
+      <div className='mt-2 grid grid-cols-4 text-3xl font-bold'>
+        {[timeGround, dayGround, monthGround, yearGround].map((ground, i) => (
+          <div
+            key={i}
+            className={cn(
+              'rounded-md py-2 text-white',
+              bgColorMap[ground.color]
+            )}
+          >
+            {ground.name}
+            {ground.code}
+            <span className='text-xs'>({ground.symbol})</span>
+          </div>
+        ))}
+      </div>
 
-          <tr>
-            <td>
-              <span>
-                <CalculateFamily daySky={daySky} ground={timeGround} />
-              </span>
-            </td>
-            <td>
-              <span>
-                <CalculateFamily daySky={daySky} ground={dayGround} />
-              </span>
-            </td>
-            <td>
-              <span>
-                <CalculateFamily daySky={daySky} ground={monthGround} />
-              </span>
-            </td>
-            <td>
-              <span>
-                <CalculateFamily daySky={daySky} ground={yearGround} />
-              </span>
-            </td>
-          </tr>
+      {/* 지지 십성 */}
+      <div className='mt-1 grid grid-cols-4 text-xs text-gray-600'>
+        {[timeGround, dayGround, monthGround, yearGround].map((ground, i) => (
+          <div key={i}>
+            <CalculateFamily daySky={daySky} ground={ground} />
+          </div>
+        ))}
+      </div>
 
-          <tr>
-            <td>
-              <span>
-                <ShowPlusMinus sky={timeSky} ground={timeGround} />
-              </span>
-            </td>
-            <td>
-              <span>
-                <ShowPlusMinus sky={daySky} ground={dayGround} />
-              </span>
-            </td>
-            <td>
-              <span>
-                <ShowPlusMinus sky={monthSky} ground={monthGround} />
-              </span>
-            </td>
-            <td>
-              <span>
-                <ShowPlusMinus sky={yearSky} ground={yearGround} />
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td colSpan={4}>
-              <ShowHop
-                yearSky={yearSky}
-                monthSky={monthSky}
-                daySky={daySky}
-                timeSky={timeSky}
-                yearGround={yearGround}
-                monthGround={monthGround}
-                dayGround={dayGround}
-                timeGround={timeGround}
-              />
-              <ShowChung
-                yearSky={yearSky}
-                monthSky={monthSky}
-                daySky={daySky}
-                timeSky={timeSky}
-                yearGround={yearGround}
-                monthGround={monthGround}
-                dayGround={dayGround}
-                timeGround={timeGround}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      {/* 지장간 */}
+      <div className='mt-1 grid grid-cols-4 text-xs text-gray-600'>
+        {[timeGround, dayGround, monthGround, yearGround].map((ground, i) => (
+          <div key={i}>
+            <CalculateInnerAttri ground={ground} daySky={daySky} />
+          </div>
+        ))}
+      </div>
+
+      {/* 음양 + 오행표시 */}
+      <div className='mt-1 grid grid-cols-4 text-xs text-gray-600'>
+        {[timeSky, daySky, monthSky, yearSky].map((sky, i) => (
+          <div key={i}>
+            <ShowPlusMinus
+              sky={sky}
+              ground={[timeGround, dayGround, monthGround, yearGround][i]}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* 합충 표시 (전체 colspan) */}
+      <div className='mt-4 space-y-1 text-xs text-gray-700'>
+        <ShowHop
+          yearSky={yearSky}
+          monthSky={monthSky}
+          daySky={daySky}
+          timeSky={timeSky}
+          yearGround={yearGround}
+          monthGround={monthGround}
+          dayGround={dayGround}
+          timeGround={timeGround}
+        />
+        <ShowChung
+          yearSky={yearSky}
+          monthSky={monthSky}
+          daySky={daySky}
+          timeSky={timeSky}
+          yearGround={yearGround}
+          monthGround={monthGround}
+          dayGround={dayGround}
+          timeGround={timeGround}
+        />
+      </div>
     </div>
   );
 };

@@ -159,6 +159,14 @@ function CalculateMansae({
     createdUser,
   ]);
 
+  useEffect(() => {
+    setSelectedYear(birthYear);
+    setSelectedMonth(birthMonth);
+    setSelectedDay(birthDay);
+    setSelectedTime(birthTime);
+    setSelectedGender(gender);
+  }, [birthDay, birthMonth, birthTime, birthYear, gender]);
+
   const buttonTitle = showResult ? '사주 보기' : '사주 입력하기';
 
   useEffect(() => {
@@ -191,7 +199,7 @@ function CalculateMansae({
             {buttonTitle}
           </Button>
         </DialogTrigger>
-        <DialogContent className='h-fit'>
+        <DialogContent className='max-h-3/4 overflow-hidden'>
           <DialogHeader>
             <DialogTitle>사주 정보 입력</DialogTitle>
           </DialogHeader>

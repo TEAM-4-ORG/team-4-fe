@@ -45,16 +45,14 @@ const birthdaySchema = z
       .refine((val) => +val >= 1 && +val <= 31, {
         message: '1부터 31 사이의 일을 입력해주세요',
       }),
-    time: z
-      .string()
-      .refine(
-        (val) => {
-          const selected = new Date(`2000-01-01T${val}`);
-          const now = new Date();
-          return selected <= now;
-        },
-        { message: '미래 시간은 선택할 수 없습니다' }
-      ),
+    time: z.string().refine(
+      (val) => {
+        const selected = new Date(`2000-01-01T${val}`);
+        const now = new Date();
+        return selected <= now;
+      },
+      { message: '미래 시간은 선택할 수 없습니다' }
+    ),
   })
   .required();
 
@@ -65,7 +63,7 @@ export default function InputBirthday({ onAdd }: InputBirthdayProps) {
       year: '',
       month: '',
       day: '',
-      time: '00:00',
+      time: '17:00',
     },
   });
 
@@ -87,7 +85,12 @@ export default function InputBirthday({ onAdd }: InputBirthdayProps) {
               <FormItem>
                 <Label htmlFor='year'>년도</Label>
                 <FormControl>
-                  <Input id='year' type='number' placeholder='예: 1990' {...field} />
+                  <Input
+                    id='year'
+                    type='number'
+                    placeholder='예: 1990'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,7 +103,12 @@ export default function InputBirthday({ onAdd }: InputBirthdayProps) {
               <FormItem>
                 <Label htmlFor='month'>월</Label>
                 <FormControl>
-                  <Input id='month' type='number' placeholder='1-12' {...field} />
+                  <Input
+                    id='month'
+                    type='number'
+                    placeholder='1-12'
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

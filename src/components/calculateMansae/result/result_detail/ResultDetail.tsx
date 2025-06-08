@@ -15,6 +15,7 @@ import {
 import CalFiveElements from '../../analysis/cal_five_elements/cal_five_elements';
 import { sajuData } from '@/pages/mansae';
 import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ResultDetailProps extends sajuData {
   selectedYear: number;
@@ -88,53 +89,71 @@ const ResultDetail: React.FC<ResultDetailProps> = (props) => {
     console.log('formattedData', formattedData);
   }, [analysisData]);
 
+  useEffect(() => {
+    console.log(
+      props.selectedYear,
+      props.selectedMonth,
+      props.selectedDay,
+      props.selectedTime,
+      props.selectedGender
+    );
+  }, [
+    props.selectedDay,
+    props.selectedGender,
+    props.selectedMonth,
+    props.selectedTime,
+    props.selectedYear,
+  ]);
+
   return (
-    <div className={cn(props.hide && 'hidden')}>
-      <ShowHop
-        yearSky={props.yearSky}
-        yearGround={props.yearGround}
-        monthSky={props.monthSky}
-        monthGround={props.monthGround}
-        daySky={props.daySky}
-        dayGround={props.dayGround}
-        timeSky={props.timeSky}
-        timeGround={props.timeGround}
-        onHopCalculated={handleHopCalculated}
-      />
-      <ShowChung
-        yearSky={props.yearSky}
-        yearGround={props.yearGround}
-        monthSky={props.monthSky}
-        monthGround={props.monthGround}
-        daySky={props.daySky}
-        dayGround={props.dayGround}
-        timeSky={props.timeSky}
-        timeGround={props.timeGround}
-        onChungCalculated={handleChungCalculated}
-      />
-      <CalFiveElements
-        yearSky={props.yearSky}
-        yearGround={props.yearGround}
-        monthSky={props.monthSky}
-        monthGround={props.monthGround}
-        daySky={props.daySky}
-        dayGround={props.dayGround}
-        timeSky={props.timeSky}
-        timeGround={props.timeGround}
-        onFiveElementsCalculated={handleFiveElementsCalculated}
-        className='hidden'
-      />
-      <CalculateDecades
-        selectedYear={props.selectedYear}
-        selectedMonth={props.selectedMonth}
-        selectedDay={props.selectedDay}
-        selectedGender={props.selectedGender}
-        yearSky={props.yearSky}
-        monthSky={props.monthSky}
-        monthGround={props.monthGround}
-        onDecadesCalculated={handleDecadesCalculated}
-      />
-    </div>
+    <ScrollArea>
+      <div className={cn(props.hide && 'hidden')}>
+        <ShowHop
+          yearSky={props.yearSky}
+          yearGround={props.yearGround}
+          monthSky={props.monthSky}
+          monthGround={props.monthGround}
+          daySky={props.daySky}
+          dayGround={props.dayGround}
+          timeSky={props.timeSky}
+          timeGround={props.timeGround}
+          onHopCalculated={handleHopCalculated}
+        />
+        <ShowChung
+          yearSky={props.yearSky}
+          yearGround={props.yearGround}
+          monthSky={props.monthSky}
+          monthGround={props.monthGround}
+          daySky={props.daySky}
+          dayGround={props.dayGround}
+          timeSky={props.timeSky}
+          timeGround={props.timeGround}
+          onChungCalculated={handleChungCalculated}
+        />
+        <CalFiveElements
+          yearSky={props.yearSky}
+          yearGround={props.yearGround}
+          monthSky={props.monthSky}
+          monthGround={props.monthGround}
+          daySky={props.daySky}
+          dayGround={props.dayGround}
+          timeSky={props.timeSky}
+          timeGround={props.timeGround}
+          onFiveElementsCalculated={handleFiveElementsCalculated}
+          className='hidden'
+        />
+        <CalculateDecades
+          selectedYear={props.selectedYear}
+          selectedMonth={props.selectedMonth}
+          selectedDay={props.selectedDay}
+          selectedGender={props.selectedGender}
+          yearSky={props.yearSky}
+          monthSky={props.monthSky}
+          monthGround={props.monthGround}
+          onDecadesCalculated={handleDecadesCalculated}
+        />
+      </div>
+    </ScrollArea>
   );
 };
 

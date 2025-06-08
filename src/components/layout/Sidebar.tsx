@@ -9,6 +9,7 @@ import {
   Gem,
   MoreVertical,
   Trash2,
+  Home,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -80,13 +81,12 @@ export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
   return (
     <div className='flex h-full flex-col p-4'>
       <div className='m-2 flex items-center justify-between'>
-        <h1 className='relative left-[-30px] h-[50px] w-[120px]'>
+        <Link href='/' className='relative left-[-30px] h-[50px] w-[120px]'>
           <Image src='/logo.png' alt='운세미로' fill className='object-cover' />
-        </h1>
+        </Link>
         {/* 앱 이름 변경 */}
         <CalculateMansae {...userInfo} />
       </div>
-
       {/* 새로운 채팅 시작 버튼 - 클릭 시 새로운 채팅 시작 및 해당 페이지로 이동 */}
       <Button
         className='mb-4 w-full'
@@ -101,7 +101,6 @@ export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
       >
         <Plus className='mr-2 h-4 w-4' /> 새로운 타로 상담
       </Button>
-
       <div className='flex-1 overflow-y-auto'>
         <nav className='flex flex-col space-y-2'>
           {projects && projects.length > 0 && (
@@ -194,24 +193,16 @@ export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
           )}
         </nav>
       </div>
-      {/*
-      <div className='mt-auto space-y-2 border-t pt-4 dark:border-gray-800'>
+
+      {/* <div className='mt-auto space-y-2 border-t pt-4 dark:border-gray-800'>
         <Link
-          href='#'
+          href='/'
           className='flex items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800'
         >
-          <History className='h-5 w-5' />
-          <span>활동 기록</span>
+          <Home className='h-5 w-5' />
+          <span>홈</span>
         </Link>
-        <Link
-          href='#'
-          className='flex items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800'
-        >
-          <Settings className='h-5 w-5' />
-          <span>설정</span>
-        </Link>
-      </div>
-      */}
+      </div> */}
     </div>
   );
 }
