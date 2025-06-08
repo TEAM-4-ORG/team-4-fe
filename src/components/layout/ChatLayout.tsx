@@ -13,15 +13,22 @@ interface Project {
 interface ChatLayoutProps {
   children: React.ReactNode;
   projects?: Project[];
+  hideSideBar?: boolean;
 }
 
-export function ChatLayout({ children, projects }: ChatLayoutProps) {
+export function ChatLayout({
+  children,
+  projects,
+  hideSideBar = false,
+}: ChatLayoutProps) {
   return (
     <div className='flex h-screen bg-gray-100 dark:bg-gray-900'>
       {/* 데스크탑 사이드바 */}
-      <div className='hidden w-64 flex-col border-r bg-white md:flex dark:border-gray-800 dark:bg-gray-950'>
-        <Sidebar projects={projects} />
-      </div>
+      {!hideSideBar && (
+        <div className='hidden w-64 flex-col border-r bg-white md:flex dark:border-gray-800 dark:bg-gray-950'>
+          <Sidebar projects={projects} />
+        </div>
+      )}
 
       {/* 모바일 사이드바 토글 버튼 */}
       <Sheet>

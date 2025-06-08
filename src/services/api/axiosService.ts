@@ -21,7 +21,6 @@ class AxiosService {
       withCredentials: true, // 쿠키 인증 포함
     });
 
-    // TODO: 인터셉터 -> 이 부분은 react query 로 대신 처리할 수 있을듯 ..?
     this.instance.interceptors.response.use(
       (response) => response,
       async (error) => {

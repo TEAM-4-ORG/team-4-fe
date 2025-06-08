@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Plus,
@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { getUserInfoFromLocalStorage } from '@/utils/localStorage';
 import { useDeleteProject } from '@/services/project';
 import { useQueryClient } from '@tanstack/react-query';
+import { localStorageUserInfo } from '@/types/common';
 
 interface Project {
   project_id: number;
@@ -37,6 +38,9 @@ interface SidebarProps {
 export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
   const router = useRouter();
   const { userId } = router.query;
+  const [userInfo, setUserInfo] = useState<localStorageUserInfo['info'] | null>(
+    null
+  );
 
   const queryClient = useQueryClient();
 
@@ -54,11 +58,23 @@ export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
     },
   });
 
-  if (!userId) return; //TODO: 방어로직
+  useEffect(() => {
+    // query 가 아직 준비되지 않았을 경우 대기
+    if (!router.isReady) return;
 
-  const userInfo = getUserInfoFromLocalStorage(Number(userId))?.info;
+    if (!userId) {
+      router.replace('/error');
+      return;
+    }
 
-  if (!userInfo) return; //TODO: 방어로직
+    const localStorageData = getUserInfoFromLocalStorage(Number(userId))?.info;
+
+    if (!localStorageData) {
+      router.replace('/error');
+    } else {
+      setUserInfo(localStorageData);
+    }
+  }, [router.isReady, userId]);
 
   return (
     <div className='flex h-full flex-col p-4'>
@@ -83,90 +99,93 @@ export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
       </Button>
 
       <div className='flex-1 overflow-y-auto'>
-        <nav className='space-y-2'>
+        <nav className='flex flex-col space-y-2'>
           {projects && projects.length > 0 && (
             <>
-              <h3 className='mt-4 mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400'>
-                사주 상담 기록
-              </h3>
-              {projects
-                .filter((project) => project.type === 'SAJU')
-                .map((project) => (
-                  <div
-                    key={project.project_id}
-                    className='group flex items-center justify-between'
-                  >
-                    <Link
-                      href={`/${userId}/saju?chatId=${project.project_id}`}
-                      className={`flex flex-1 items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800 ${router.query.chatId === project.project_id.toString() ? 'bg-gray-200 font-semibold dark:bg-gray-800' : ''}`}
+              <div className='h-1/2 flex-1'>
+                <h3 className='mt-4 mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400'>
+                  사주 상담 기록
+                </h3>
+                {projects
+                  .filter((project) => project.type === 'SAJU')
+                  .map((project) => (
+                    <div
+                      key={project.project_id}
+                      className='group flex items-center justify-between'
                     >
-                      <Sparkles className='h-5 w-5 text-yellow-500' />
-                      <span>{project.title}</span>
-                    </Link>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant='ghost'
-                          className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100'
-                        >
-                          <MoreVertical className='h-4 w-4' />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align='end'>
-                        <DropdownMenuItem
-                          className='text-red-600'
-                          onClick={() =>
-                            handleDeleteProject(project.project_id)
-                          }
-                        >
-                          <Trash2 className='mr-2 h-4 w-4' />
-                          삭제
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                ))}
-
-              <h3 className='mt-4 mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400'>
-                타로 상담 기록
-              </h3>
-              {projects
-                .filter((project) => project.type === 'TAROT')
-                .map((project) => (
-                  <div
-                    key={project.project_id}
-                    className='group flex items-center justify-between'
-                  >
-                    <Link
-                      href={`/${userId}/tarot?chatId=${project.project_id}`}
-                      className={`flex flex-1 items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800 ${router.query.chatId === project.project_id.toString() ? 'bg-gray-200 font-semibold dark:bg-gray-800' : ''}`}
+                      <Link
+                        href={`/${userId}/saju?chatId=${project.project_id}`}
+                        className={`flex flex-1 items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800 ${router.query.chatId === project.project_id.toString() ? 'bg-gray-200 font-semibold dark:bg-gray-800' : ''}`}
+                      >
+                        <Sparkles className='h-5 w-5 text-yellow-500' />
+                        <span>{project.title}</span>
+                      </Link>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant='ghost'
+                            className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100'
+                          >
+                            <MoreVertical className='h-4 w-4' />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end'>
+                          <DropdownMenuItem
+                            className='text-red-600'
+                            onClick={() =>
+                              handleDeleteProject(project.project_id)
+                            }
+                          >
+                            <Trash2 className='mr-2 h-4 w-4' />
+                            삭제
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  ))}
+              </div>
+              <div className='h-1/2 flex-1'>
+                <h3 className='mt-4 mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400'>
+                  타로 상담 기록
+                </h3>
+                {projects
+                  .filter((project) => project.type === 'TAROT')
+                  .map((project) => (
+                    <div
+                      key={project.project_id}
+                      className='group flex items-center justify-between'
                     >
-                      <Gem className='h-5 w-5 text-purple-500' />
-                      <span>{project.title}</span>
-                    </Link>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant='ghost'
-                          className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100'
-                        >
-                          <MoreVertical className='h-4 w-4' />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align='end'>
-                        <DropdownMenuItem
-                          className='text-red-600'
-                          onClick={() =>
-                            handleDeleteProject(project.project_id)
-                          }
-                        >
-                          <Trash2 className='mr-2 h-4 w-4' />
-                          삭제
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                ))}
+                      <Link
+                        href={`/${userId}/tarot?chatId=${project.project_id}`}
+                        className={`flex flex-1 items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800 ${router.query.chatId === project.project_id.toString() ? 'bg-gray-200 font-semibold dark:bg-gray-800' : ''}`}
+                      >
+                        <Gem className='h-5 w-5 text-purple-500' />
+                        <span>{project.title}</span>
+                      </Link>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant='ghost'
+                            className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100'
+                          >
+                            <MoreVertical className='h-4 w-4' />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end'>
+                          <DropdownMenuItem
+                            className='text-red-600'
+                            onClick={() =>
+                              handleDeleteProject(project.project_id)
+                            }
+                          >
+                            <Trash2 className='mr-2 h-4 w-4' />
+                            삭제
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  ))}
+              </div>
             </>
           )}
         </nav>
