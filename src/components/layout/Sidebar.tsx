@@ -4,6 +4,7 @@ import { Plus, Settings, History, Sparkles, Gem } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import CalculateMansae from '../calculateMansae';
+import { getUserInfoFromLocalStorage } from '@/utils/localStorage';
 
 interface Project {
   project_id: number;
@@ -19,11 +20,17 @@ export function Sidebar({ projects }: SidebarProps) {
   const router = useRouter();
   const { userId } = router.query;
 
+  if (!userId) return; //TODO: 방어로직
+
+  const userInfo = getUserInfoFromLocalStorage(Number(userId))?.info;
+
+  if (!userInfo) return; //TODO: 방어로직
+
   return (
     <div className='flex h-full flex-col p-4'>
       <div className='mb-6 flex items-center justify-between'>
         <h1 className='text-2xl font-bold'>궁금해</h1> {/* 앱 이름 변경 */}
-        <CalculateMansae />
+        <CalculateMansae {...userInfo} />
       </div>
 
       {/* 새로운 채팅 시작 버튼 - 클릭 시 새로운 채팅 시작 및 해당 페이지로 이동 */}

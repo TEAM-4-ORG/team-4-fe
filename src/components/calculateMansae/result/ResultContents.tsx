@@ -4,6 +4,7 @@ import ResultDetail from '@/components/calculateMansae/result/result_detail/Resu
 import { GenderType, GroundType, SajuRequest, SkyType } from '@/types/saju';
 import { useEffect, useState } from 'react';
 import InputBirthday from '../input_birthday/input_birthday';
+import { Button } from '@/components/ui/button';
 
 interface ResultContentsProps {
   selectedYear: number;
@@ -14,6 +15,7 @@ interface ResultContentsProps {
   type: 'dialog' | 'inline';
   handleSetSajuData: (data: SajuRequest) => void;
   setIsSajuDataSettled: (value: boolean) => void;
+  showResult: boolean;
   onAdd: (
     year: number,
     month: number,
@@ -42,25 +44,38 @@ export default function ResultContents({
   selectedGender,
   type,
   onAdd,
+  showResult,
   handleSetSajuData,
   setIsSajuDataSettled,
 }: ResultContentsProps) {
   const [sajuData, setSajuData] = useState<sajuData | null>(null);
-  const [hide, setHide] = useState<boolean>(type === 'inline');
+  const [hideResult, setHideResult] = useState<boolean>(!showResult);
 
   useEffect(() => {
-    setHide(!sajuData || type === 'inline');
-  }, [sajuData, type]);
+    setHideResult(!showResult || !sajuData);
+  }, [sajuData, showResult]);
 
   return (
     <>
-      <InputBirthday onAdd={onAdd} />
+      {hideResult ? (
+        <InputBirthday onAdd={onAdd} />
+      ) : (
+        type == 'dialog' && (
+          <Button
+            onClick={() => {
+              setHideResult(true);
+            }}
+          >
+            새로운 사주 입력하기
+          </Button>
+        )
+      )}
       <FourPillarViewer
         selectedYear={selectedYear}
         selectedMonth={selectedMonth}
         selectedDay={selectedDay}
         selectedTime={selectedTime}
-        hide={hide}
+        hide={hideResult}
       />
       <Analysis
         selectedYear={selectedYear}
@@ -68,7 +83,7 @@ export default function ResultContents({
         selectedDay={selectedDay}
         selectedTime={selectedTime}
         setSajuData={setSajuData}
-        hide={hide}
+        hide={hideResult}
       />
       {sajuData && (
         <ResultDetail
@@ -80,7 +95,7 @@ export default function ResultContents({
           selectedGender={selectedGender}
           handleSetSajuData={handleSetSajuData}
           setIsSajuDataSettled={setIsSajuDataSettled}
-          hide={hide}
+          hide={hideResult}
         />
       )}
     </>

@@ -52,9 +52,19 @@ const initialRequestData: SajuRequest = {
 function CalculateMansae({
   type = 'dialog',
   shouldOpenDialog,
+  birthYear = 0,
+  birthMonth = 0,
+  birthDay = 0,
+  birthTime = '',
+  gender = '남자',
 }: {
   type?: 'dialog' | 'inline';
   shouldOpenDialog?: boolean;
+  birthYear?: number;
+  birthMonth?: number;
+  birthDay?: number;
+  birthTime?: string;
+  gender: GenderType;
 }) {
   const today = {
     year: new Date().getFullYear(),
@@ -63,22 +73,23 @@ function CalculateMansae({
   };
 
   const [selectedYear, setSelectedYear] = useState<BasicInfo['birthYear']>(
-    today.year
+    birthYear || today.year
   );
   const [selectedMonth, setSelectedMonth] = useState<BasicInfo['birthMonth']>(
-    today.month
+    birthMonth || today.month
   );
   const [selectedDay, setSelectedDay] = useState<BasicInfo['birthDay']>(
-    today.date
+    birthDay || today.date
   );
-  const [selectedTime, setSelectedTime] =
-    useState<BasicInfo['birthTime']>('09:50');
-  const [selectedGender, setSelectedGender] = useState<GenderType>('남자');
+  const [selectedTime, setSelectedTime] = useState<BasicInfo['birthTime']>(
+    birthTime || '00:00'
+  );
+  const [selectedGender, setSelectedGender] = useState<GenderType>(gender);
   const [formattedSajuData, setFormattedSajuData] =
     useState<SajuRequest>(initialRequestData);
   const [isSajuDataSettled, setIsSajuDataSettled] = useState(false);
 
-  const [showResult, setShowResult] = useState(false);
+  const [showResult, setShowResult] = useState(type === 'dialog');
   const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
   const router = useRouter();
 
@@ -88,7 +99,7 @@ function CalculateMansae({
     isSuccess: createdUser,
   } = useCreateUser({
     onSuccess: (data) => {
-      router.replace(`${data.result.user_id}/saju`);
+      router.replace(`/${data.result.user_id}/saju`);
     },
   });
 
@@ -114,7 +125,6 @@ function CalculateMansae({
   };
 
   useEffect(() => {
-    console.log(isSajuDataSettled);
     if (createdUser) {
       saveUserInfoToLocalStorage({
         userId: data.result.user_id,
@@ -142,6 +152,10 @@ function CalculateMansae({
 
   const buttonTitle = showResult ? '사주 보기' : '사주 입력하기';
 
+  useEffect(() => {
+    console.log(showResult);
+  }, [showResult]);
+
   if (type === 'inline')
     return (
       <ResultContents
@@ -151,6 +165,7 @@ function CalculateMansae({
         selectedTime={selectedTime}
         selectedGender={selectedGender}
         type={type}
+        showResult={showResult}
         handleSetSajuData={setFormattedSajuData}
         setIsSajuDataSettled={setIsSajuDataSettled}
         onAdd={onAdd}
@@ -180,6 +195,7 @@ function CalculateMansae({
             type={type}
             handleSetSajuData={setFormattedSajuData}
             setIsSajuDataSettled={setIsSajuDataSettled}
+            showResult={showResult}
             onAdd={onAdd}
           />
         </DialogContent>
