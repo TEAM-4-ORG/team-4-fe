@@ -4,7 +4,7 @@ import {
   BasicSajuResponse,
   SajuConsultRequest,
   SajuConsultResponse,
-  SaveSajuDataRequest,
+  SajuSaveRequest,
 } from './types';
 import { sajuService } from './sajuService';
 
@@ -23,13 +23,12 @@ export const useSajuConsult = (
 
 export const useSaveSajuData = (
   options?: Omit<
-    UseMutationOptions<BasicSajuResponse, Error, SaveSajuDataRequest>,
+    UseMutationOptions<BasicSajuResponse, Error, SajuSaveRequest>,
     'mutationKey' | 'mutationFn'
   >
 ) =>
   useMutation({
     mutationKey: saveSajuDataKey,
-    mutationFn: (payload: SaveSajuDataRequest) =>
-      sajuService.postSajuData(payload),
+    mutationFn: (payload: SajuSaveRequest) => sajuService.postSajuData(payload),
     ...options,
   });
