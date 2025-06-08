@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useSaveSajuData } from '@/services/saju';
 import { useCreateUser } from '@/services/user';
 import {
   BasicInfo,
@@ -93,6 +94,7 @@ function CalculateMansae({
   const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
   const router = useRouter();
 
+  //유저 생성
   const {
     data,
     mutate,
@@ -102,6 +104,9 @@ function CalculateMansae({
       router.replace(`/${data.result.user_id}/saju`);
     },
   });
+
+  //사주 정보 저장
+  const { mutate: saveSajuData } = useSaveSajuData();
 
   const onAdd = (
     year: number,
@@ -135,7 +140,11 @@ function CalculateMansae({
           birthTime: selectedTime,
           gender: selectedGender,
         },
-        saju: formattedSajuData,
+      });
+
+      saveSajuData({
+        user_id: data.result.user_id,
+        sajuData: formattedSajuData,
       });
     }
   }, [

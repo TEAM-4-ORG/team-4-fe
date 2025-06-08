@@ -7,7 +7,6 @@ import { useSajuConsult } from '@/services/saju';
 import { useNewProject, useProjectInfo } from '@/services/project';
 import { CreateProjectRequest } from '@/services/project/types';
 import { SajuConsultRequest } from '@/services/saju/types';
-import { getUserInfoFromLocalStorage } from '@/utils/localStorage';
 import { SajuChatWindow } from '@/components/chat/SajuChatWindow';
 
 export default function SajuChatPage() {
@@ -93,9 +92,9 @@ export default function SajuChatPage() {
     let currentProjectId = chatId;
 
     // chatId가 없을 경우 새 프로젝트 생성
-    if (!chatId) {
+    if (!chatId && userId) {
       const projectRequest: CreateProjectRequest = {
-        user_id: userId,
+        user_id: Number(userId),
         type: 'SAJU',
         first_question: userMessage,
       };
@@ -104,13 +103,10 @@ export default function SajuChatPage() {
       currentProjectId = response.result.projectId.toString();
     }
 
-    const userInfo = getUserInfoFromLocalStorage(Number(userId));
-
     const request: SajuConsultRequest = {
       user_id: Number(userId),
       project_id: Number(currentProjectId),
       question: userMessage,
-      sajuData: userInfo?.saju,
     };
 
     try {
@@ -127,13 +123,14 @@ export default function SajuChatPage() {
         )
       );
     } catch (error) {
+      console.log(error);
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === placeholderBotMessageId
             ? {
-              ...msg,
-              text: '사주 상담 챗봇 응답을 받을 수 없습니다.',
-            }
+                ...msg,
+                text: '사주 상담 챗봇 응답을 받을 수 없습니다.',
+              }
             : msg
         )
       );
