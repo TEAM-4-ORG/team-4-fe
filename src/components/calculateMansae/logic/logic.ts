@@ -1,9 +1,10 @@
-import Data, { Sky, Ground } from '../data/data';
+import { GroundType, SkyType } from '@/types/saju';
+import Data from '../data/data';
 
 class Logic {
   private data: {
-    sky: Sky[];
-    ground: Ground[];
+    sky: SkyType[];
+    ground: GroundType[];
   };
 
   constructor() {
@@ -14,7 +15,7 @@ class Logic {
     selectedYear: number,
     selectedMonth: number,
     selectedDay: number
-  ): Sky => {
+  ): SkyType => {
     if (selectedMonth == 0 && selectedDay < 6) {
       selectedYear--;
     }
@@ -29,7 +30,7 @@ class Logic {
     selectedYear: number,
     selectedMonth: number,
     selectedDay: number
-  ): Ground => {
+  ): GroundType => {
     if (selectedMonth == 0 && selectedDay < 6) {
       selectedYear--;
     }
@@ -44,7 +45,7 @@ class Logic {
     selectedYear: number,
     selectedMonth: number,
     selectedDay: number
-  ): Sky => {
+  ): SkyType => {
     if (selectedMonth == 0 && selectedDay < 6) {
       selectedYear--;
       selectedMonth = 12;
@@ -158,7 +159,10 @@ class Logic {
     return this.data.sky[monthSky];
   };
 
-  returnMonthGround = (selectedMonth: number, selectedDay: number): Ground => {
+  returnMonthGround = (
+    selectedMonth: number,
+    selectedDay: number
+  ): GroundType => {
     const monthGroundCal = selectedMonth + 1 < 12 ? selectedMonth + 1 : 0;
     let monthGround = monthGroundCal;
 
@@ -238,7 +242,7 @@ class Logic {
     selectedYear: number,
     selectedMonth: number,
     selectedDay: number
-  ): Sky => {
+  ): SkyType => {
     const standard = new Date(1925, 0, 10);
     const daySkyCal = new Date(selectedYear, selectedMonth, selectedDay);
     const diffDate = daySkyCal.getTime() - standard.getTime();
@@ -251,7 +255,7 @@ class Logic {
     selectedYear: number,
     selectedMonth: number,
     selectedDay: number
-  ): Ground => {
+  ): GroundType => {
     const standard = new Date(1925, 0, 4);
     const dayGroundCal = new Date(selectedYear, selectedMonth, selectedDay);
     const diffDate = dayGroundCal.getTime() - standard.getTime();
@@ -265,7 +269,7 @@ class Logic {
     selectedMonth: number,
     selectedDay: number,
     selectedTime: string
-  ): Sky => {
+  ): SkyType => {
     const standard = new Date(1925, 0, 10);
     const daySkyCal = new Date(selectedYear, selectedMonth, selectedDay);
     const diffDate = daySkyCal.getTime() - standard.getTime();
@@ -319,7 +323,7 @@ class Logic {
     return this.data.sky[timeSky];
   };
 
-  returnTimeGround = (selectedTime: string): Ground => {
+  returnTimeGround = (selectedTime: string): GroundType => {
     const [hourString, minutesString] = selectedTime.split(':');
     const hour = Number(hourString);
     const minutes = Number(minutesString);

@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Settings, History, Sparkles, Gem, MoreVertical, Trash2 } from 'lucide-react';
+import {
+  Plus,
+  Settings,
+  History,
+  Sparkles,
+  Gem,
+  MoreVertical,
+  Trash2,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import CalculateMansae from '../calculateMansae';
@@ -10,8 +18,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import { getUserInfoFromLocalStorage } from '@/utils/localStorage';
 
 interface Project {
   project_id: number;
@@ -24,7 +33,10 @@ interface SidebarProps {
   onProjectDeleted?: () => void;
 }
 
-export function Sidebar({ projects: initialProjects, onProjectDeleted }: SidebarProps) {
+export function Sidebar({
+  projects: initialProjects,
+  onProjectDeleted,
+}: SidebarProps) {
   const router = useRouter();
   const { userId } = router.query;
   const [projects, setProjects] = useState<Project[]>(initialProjects || []);
@@ -39,7 +51,11 @@ export function Sidebar({ projects: initialProjects, onProjectDeleted }: Sidebar
     try {
       const response = await projectService.deleteProject(projectId);
       if (response.isSuccess) {
-        setProjects(projects.filter((project: Project) => project.project_id !== projectId));
+        setProjects(
+          projects.filter(
+            (project: Project) => project.project_id !== projectId
+          )
+        );
         toast.success('프로젝트가 삭제되었습니다.');
         if (onProjectDeleted) {
           onProjectDeleted();
@@ -53,11 +69,17 @@ export function Sidebar({ projects: initialProjects, onProjectDeleted }: Sidebar
     }
   };
 
+  if (!userId) return; //TODO: 방어로직
+
+  const userInfo = getUserInfoFromLocalStorage(Number(userId))?.info;
+
+  if (!userInfo) return; //TODO: 방어로직
+
   return (
     <div className='flex h-full flex-col p-4'>
       <div className='mb-6 flex items-center justify-between'>
         <h1 className='text-2xl font-bold'>궁금해</h1> {/* 앱 이름 변경 */}
-        <CalculateMansae />
+        <CalculateMansae {...userInfo} />
       </div>
 
       {/* 새로운 채팅 시작 버튼 - 클릭 시 새로운 채팅 시작 및 해당 페이지로 이동 */}
@@ -85,26 +107,34 @@ export function Sidebar({ projects: initialProjects, onProjectDeleted }: Sidebar
               {projects
                 .filter((project) => project.type === 'SAJU')
                 .map((project) => (
-                  <div key={project.project_id} className="flex items-center justify-between group">
+                  <div
+                    key={project.project_id}
+                    className='group flex items-center justify-between'
+                  >
                     <Link
                       href={`/${userId}/saju?chatId=${project.project_id}`}
-                      className={`flex items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800 flex-1 ${router.query.chatId === project.project_id.toString() ? 'bg-gray-200 font-semibold dark:bg-gray-800' : ''}`}
+                      className={`flex flex-1 items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800 ${router.query.chatId === project.project_id.toString() ? 'bg-gray-200 font-semibold dark:bg-gray-800' : ''}`}
                     >
                       <Sparkles className='h-5 w-5 text-yellow-500' />
                       <span>{project.title}</span>
                     </Link>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100">
-                          <MoreVertical className="h-4 w-4" />
+                        <Button
+                          variant='ghost'
+                          className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100'
+                        >
+                          <MoreVertical className='h-4 w-4' />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent align='end'>
                         <DropdownMenuItem
-                          className="text-red-600"
-                          onClick={() => handleDeleteProject(project.project_id)}
+                          className='text-red-600'
+                          onClick={() =>
+                            handleDeleteProject(project.project_id)
+                          }
                         >
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <Trash2 className='mr-2 h-4 w-4' />
                           삭제
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -118,26 +148,34 @@ export function Sidebar({ projects: initialProjects, onProjectDeleted }: Sidebar
               {projects
                 .filter((project) => project.type === 'TAROT')
                 .map((project) => (
-                  <div key={project.project_id} className="flex items-center justify-between group">
+                  <div
+                    key={project.project_id}
+                    className='group flex items-center justify-between'
+                  >
                     <Link
                       href={`/${userId}/tarot?chatId=${project.project_id}`}
-                      className={`flex items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800 flex-1 ${router.query.chatId === project.project_id.toString() ? 'bg-gray-200 font-semibold dark:bg-gray-800' : ''}`}
+                      className={`flex flex-1 items-center space-x-3 rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-800 ${router.query.chatId === project.project_id.toString() ? 'bg-gray-200 font-semibold dark:bg-gray-800' : ''}`}
                     >
                       <Gem className='h-5 w-5 text-purple-500' />
                       <span>{project.title}</span>
                     </Link>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100">
-                          <MoreVertical className="h-4 w-4" />
+                        <Button
+                          variant='ghost'
+                          className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100'
+                        >
+                          <MoreVertical className='h-4 w-4' />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent align='end'>
                         <DropdownMenuItem
-                          className="text-red-600"
-                          onClick={() => handleDeleteProject(project.project_id)}
+                          className='text-red-600'
+                          onClick={() =>
+                            handleDeleteProject(project.project_id)
+                          }
                         >
-                          <Trash2 className="mr-2 h-4 w-4" />
+                          <Trash2 className='mr-2 h-4 w-4' />
                           삭제
                         </DropdownMenuItem>
                       </DropdownMenuContent>

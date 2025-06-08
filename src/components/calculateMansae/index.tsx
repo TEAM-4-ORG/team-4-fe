@@ -1,7 +1,4 @@
-import Analysis from '@/components/calculateMansae/analysis/analysis';
-import InputBirthday from '@/components/calculateMansae/input_birthday/input_birthday';
-import FourPillarViewer from '@/components/calculateMansae/result/four_pillar_viewer';
-import ResultDetail from '@/components/calculateMansae/result/result_detail/ResultDetail';
+import ResultContents from '@/components/calculateMansae/result/ResultContents';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -23,17 +20,6 @@ import { saveUserInfoToLocalStorage } from '@/utils/localStorage';
 import { useRouter } from 'next/router';
 
 import { useEffect, useState } from 'react';
-
-export interface sajuData {
-  yearSky: SkyType;
-  yearGround: GroundType;
-  monthSky: SkyType;
-  monthGround: GroundType;
-  daySky: SkyType;
-  dayGround: GroundType;
-  timeSky: SkyType;
-  timeGround: GroundType;
-}
 
 const initialRequestData: SajuRequest = {
   basicInfo: {
@@ -66,9 +52,19 @@ const initialRequestData: SajuRequest = {
 function CalculateMansae({
   type = 'dialog',
   shouldOpenDialog,
+  birthYear = 0,
+  birthMonth = 0,
+  birthDay = 0,
+  birthTime = '',
+  gender = '남자',
 }: {
   type?: 'dialog' | 'inline';
   shouldOpenDialog?: boolean;
+  birthYear?: number;
+  birthMonth?: number;
+  birthDay?: number;
+  birthTime?: string;
+  gender?: GenderType;
 }) {
   const today = {
     year: new Date().getFullYear(),
@@ -77,44 +73,33 @@ function CalculateMansae({
   };
 
   const [selectedYear, setSelectedYear] = useState<BasicInfo['birthYear']>(
-    today.year
+    birthYear || today.year
   );
   const [selectedMonth, setSelectedMonth] = useState<BasicInfo['birthMonth']>(
-    today.month
+    birthMonth || today.month
   );
   const [selectedDay, setSelectedDay] = useState<BasicInfo['birthDay']>(
-    today.date
+    birthDay || today.date
   );
-  const [selectedTime, setSelectedTime] =
-    useState<BasicInfo['birthTime']>('09:50');
-  const [selectedGender, setSelectedGender] = useState<GenderType>('남자');
+  const [selectedTime, setSelectedTime] = useState<BasicInfo['birthTime']>(
+    birthTime || '00:00'
+  );
+  const [selectedGender, setSelectedGender] = useState<GenderType>(gender);
   const [formattedSajuData, setFormattedSajuData] =
     useState<SajuRequest>(initialRequestData);
   const [isSajuDataSettled, setIsSajuDataSettled] = useState(false);
 
-  const [showResult, setShowResult] = useState(false);
-  const [sajuData, setSajuData] = useState<sajuData | null>(null);
+  const [showResult, setShowResult] = useState(type === 'dialog');
   const [isDialogOpen, setIsDialogOpen] = useState(shouldOpenDialog);
   const router = useRouter();
 
-  const { mutate } = useCreateUser({
+  const {
+    data,
+    mutate,
+    isSuccess: createdUser,
+  } = useCreateUser({
     onSuccess: (data) => {
-      saveUserInfoToLocalStorage({
-        userId: data.result.user_id,
-        info: {
-          birthYear: selectedYear,
-          birthMonth: selectedMonth,
-          birthDay: selectedDay,
-          birthTime: selectedTime,
-          gender: selectedGender,
-        },
-        saju: formattedSajuData,
-      });
-
-      router.replace(`${data.result.user_id}/saju`);
-    },
-    onSettled(data) {
-      console.log(data);
+      router.replace(`/${data.result.user_id}/saju`);
     },
   });
 
@@ -131,7 +116,7 @@ function CalculateMansae({
       gender: gender === '남자',
     };
     setSelectedYear(year);
-    setSelectedMonth(month - 1); //Date 형식이라 -1
+    setSelectedMonth(month);
     setSelectedDay(day);
     setSelectedTime(time);
     setSelectedGender(gender);
@@ -139,18 +124,10 @@ function CalculateMansae({
     mutate(payload);
   };
 
-  const handleAnalysisComplete = (data: sajuData) => {
-    setSajuData(data);
-  };
-
   useEffect(() => {
-    console.log(formattedSajuData);
-  }, [formattedSajuData]);
-
-  useEffect(() => {
-    if (isSajuDataSettled) {
+    if (createdUser) {
       saveUserInfoToLocalStorage({
-        userId: Number(router.query.userId) || 0,
+        userId: data.result.user_id,
         info: {
           birthYear: selectedYear,
           birthMonth: selectedMonth,
@@ -169,53 +146,30 @@ function CalculateMansae({
     selectedDay,
     selectedTime,
     selectedGender,
-    router.query.userId,
+    data,
+    createdUser,
   ]);
 
   const buttonTitle = showResult ? '사주 보기' : '사주 입력하기';
 
-  const resultContents = (
-    <>
-      <FourPillarViewer
-        selectedYear={selectedYear}
-        selectedMonth={selectedMonth}
-        selectedDay={selectedDay}
-        selectedTime={selectedTime}
-        hide={type == 'inline'}
-      />
+  useEffect(() => {
+    console.log(showResult);
+  }, [showResult]);
 
-      <Analysis
+  if (type === 'inline')
+    return (
+      <ResultContents
         selectedYear={selectedYear}
         selectedMonth={selectedMonth}
         selectedDay={selectedDay}
         selectedTime={selectedTime}
         selectedGender={selectedGender}
-        onAnalysisComplete={handleAnalysisComplete}
-        hide={type == 'inline'}
+        type={type}
+        showResult={showResult}
+        handleSetSajuData={setFormattedSajuData}
+        setIsSajuDataSettled={setIsSajuDataSettled}
+        onAdd={onAdd}
       />
-
-      {sajuData && (
-        <ResultDetail
-          {...sajuData}
-          selectedYear={selectedYear}
-          selectedMonth={selectedMonth}
-          selectedDay={selectedDay}
-          selectedTime={selectedTime}
-          selectedGender={selectedGender}
-          handleSetSajuData={setFormattedSajuData}
-          setIsSajuDataSettled={setIsSajuDataSettled}
-          hide={type == 'inline'}
-        />
-      )}
-    </>
-  );
-
-  if (type === 'inline')
-    return (
-      <>
-        <InputBirthday onAdd={onAdd} />
-        {resultContents}
-      </>
     );
   return (
     <div>
@@ -229,16 +183,21 @@ function CalculateMansae({
           </Button>
         </DialogTrigger>
         <DialogContent className='h-fit'>
-          {sajuData ? (
-            resultContents
-          ) : (
-            <>
-              <DialogHeader>
-                <DialogTitle>사주 정보 입력</DialogTitle>
-              </DialogHeader>
-              <InputBirthday onAdd={onAdd} />
-            </>
-          )}
+          <DialogHeader>
+            <DialogTitle>사주 정보 입력</DialogTitle>
+          </DialogHeader>
+          <ResultContents
+            selectedYear={selectedYear}
+            selectedMonth={selectedMonth}
+            selectedDay={selectedDay}
+            selectedTime={selectedTime}
+            selectedGender={selectedGender}
+            type={type}
+            handleSetSajuData={setFormattedSajuData}
+            setIsSajuDataSettled={setIsSajuDataSettled}
+            showResult={showResult}
+            onAdd={onAdd}
+          />
         </DialogContent>
       </Dialog>
     </div>

@@ -20,7 +20,7 @@ export default function SajuChatPage() {
     enabled: !!userId,
   });
 
-  //chatId 있으면 fetch
+  //chatId 있으면 fetch proejct (대화 기록들)
   const { data: projectInfo, isSuccess: projectInfoIsSuccess } = useProjectInfo(
     Number(chatId),
     {
@@ -28,9 +28,19 @@ export default function SajuChatPage() {
     }
   );
 
-  const { mutateAsync: postSajuAsync, isPending: isBotTyping } =
-    useSajuConsult();
+  //사주 응답 요청
+  const { mutateAsync: postSajuAsync, isPending: isBotTyping } = useSajuConsult(
+    {
+      onSuccess: (data, variables) => {
+        const { project_id } = variables;
+        if (!chatId) {
+          router.replace(`/${userId}/saju?chatId=${project_id}`);
+        }
+      },
+    }
+  );
 
+  //사주 요청 처음이면 Project 생성 (chatId 반환)
   const { mutateAsync: postProjectAsync } = useNewProject();
 
   useEffect(() => {
@@ -92,9 +102,6 @@ export default function SajuChatPage() {
 
       const response = await postProjectAsync(projectRequest);
       currentProjectId = response.result.projectId.toString();
-
-      // URL 업데이트
-      router.replace(`/${userId}/saju?chatId=${currentProjectId}`);
     }
 
     const userInfo = getUserInfoFromLocalStorage(Number(userId));

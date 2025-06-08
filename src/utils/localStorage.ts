@@ -41,3 +41,33 @@ export function getUserInfoFromLocalStorage(
     return undefined;
   }
 }
+
+export function updateUserInfoInLocalStorage(
+  userId: number,
+  updatedFields: Partial<localStorageUserInfo>
+): boolean {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return false;
+
+    const userInfoList: localStorageUserInfo[] = parsed;
+    const userIndex = userInfoList.findIndex((user) => user.userId === userId);
+
+    if (userIndex === -1) return false;
+
+    // 기존 객체를 복사하고 필드만 업데이트
+    userInfoList[userIndex] = {
+      ...userInfoList[userIndex],
+      ...updatedFields,
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userInfoList));
+    return true;
+  } catch (e) {
+    console.error('Failed to update user info in localStorage:', e);
+    return false;
+  }
+}

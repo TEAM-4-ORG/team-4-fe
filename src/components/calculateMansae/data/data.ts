@@ -1,27 +1,7 @@
-import { ColorKey } from '@/types/saju';
-
-export interface Sky {
-  name: string;
-  symbol: string;
-  sign: string;
-  key: number;
-  code: string;
-  color: ColorKey;
-}
-
-export interface Ground {
-  name: string;
-  symbol: string;
-  sign: string;
-  key: number;
-  code: string;
-  color: ColorKey;
-  innerAttri: string;
-}
-
+import { GroundType, SkyType } from '@/types/saju';
 class Data {
-  sky: Sky[];
-  ground: Ground[];
+  sky: SkyType[];
+  ground: GroundType[];
 
   constructor() {
     this.sky = [

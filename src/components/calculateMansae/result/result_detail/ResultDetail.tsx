@@ -35,8 +35,6 @@ interface AnalysisData {
 }
 
 const ResultDetail: React.FC<ResultDetailProps> = (props) => {
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const [error, setError] = useState<string | null>(null);
   const [analysisData, setAnalysisData] = useState<AnalysisData>({
     fiveElements: null,
     hopData: null,
