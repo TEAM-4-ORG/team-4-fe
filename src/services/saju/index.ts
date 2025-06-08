@@ -1,6 +1,11 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
-import { sajuConsultKey } from './keys';
-import { SajuConsultRequest, SajuConsultResponse } from './types';
+import { sajuConsultKey, saveSajuDataKey } from './keys';
+import {
+  BasicSajuResponse,
+  SajuConsultRequest,
+  SajuConsultResponse,
+  SaveSajuDataRequest,
+} from './types';
 import { sajuService } from './sajuService';
 
 export const useSajuConsult = (
@@ -13,5 +18,18 @@ export const useSajuConsult = (
     mutationKey: sajuConsultKey,
     mutationFn: (payload: SajuConsultRequest) =>
       sajuService.postConsult(payload),
+    ...options,
+  });
+
+export const useSaveSajuData = (
+  options?: Omit<
+    UseMutationOptions<BasicSajuResponse, Error, SaveSajuDataRequest>,
+    'mutationKey' | 'mutationFn'
+  >
+) =>
+  useMutation({
+    mutationKey: saveSajuDataKey,
+    mutationFn: (payload: SaveSajuDataRequest) =>
+      sajuService.postSajuData(payload),
     ...options,
   });

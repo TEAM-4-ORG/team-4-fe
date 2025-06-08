@@ -1,5 +1,10 @@
 import AxiosService from '../api/axiosService';
-import { SajuConsultRequest, SajuConsultResponse } from './types';
+import {
+  BasicSajuResponse,
+  SajuConsultRequest,
+  SajuConsultResponse,
+  SaveSajuDataRequest,
+} from './types';
 
 class SajuService extends AxiosService {
   constructor() {
@@ -8,6 +13,10 @@ class SajuService extends AxiosService {
 
   postConsult(payload: SajuConsultRequest): Promise<SajuConsultResponse> {
     return this.http.post(`/consult`, payload);
+  }
+
+  postSajuData(payload: SaveSajuDataRequest): Promise<BasicSajuResponse> {
+    return this.http.post(`/save`, payload);
   }
 }
 

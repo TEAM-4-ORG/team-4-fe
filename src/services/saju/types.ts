@@ -2,6 +2,9 @@ export interface SajuConsultRequest {
   user_id: number;
   project_id: number;
   question: string;
+}
+
+export interface SaveSajuDataRequest {
   sajuData: {
     basicInfo: {
       birthDate: {
@@ -57,10 +60,13 @@ interface ElementInfo {
   innerAttri?: string;
 }
 
-export interface SajuConsultResponse {
+export interface BasicSajuResponse {
   isSuccess: boolean;
   code: string;
   message: string;
+}
+
+export interface SajuConsultResponse extends BasicSajuResponse {
   result: {
     consultation_id: number;
     question: string;
