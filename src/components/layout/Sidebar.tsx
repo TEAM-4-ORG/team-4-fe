@@ -186,7 +186,7 @@ export function Sidebar({
           )}
         </nav>
       </div>
-
+      {/*
       <div className='mt-auto space-y-2 border-t pt-4 dark:border-gray-800'>
         <Link
           href='#'
@@ -203,6 +203,7 @@ export function Sidebar({
           <span>설정</span>
         </Link>
       </div>
+      */}
     </div>
   );
 }
