@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChatLayout } from '@/components/layout/ChatLayout';
-import { Message } from '@/components/chat/ChatWindow';
+import { Message } from '@/components/chat/TarotChatWindow';
 import { useRouter } from 'next/router';
 import { useUserInfo } from '@/services/user';
 import { useSajuConsult } from '@/services/saju';
@@ -131,9 +131,9 @@ export default function SajuChatPage() {
         prev.map((msg) =>
           msg.id === placeholderBotMessageId
             ? {
-                ...msg,
-                text: '사주 상담 챗봇 응답을 받을 수 없습니다.',
-              }
+              ...msg,
+              text: '사주 상담 챗봇 응답을 받을 수 없습니다.',
+            }
             : msg
         )
       );
