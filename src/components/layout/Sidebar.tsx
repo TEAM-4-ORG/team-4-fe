@@ -79,7 +79,7 @@ export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
   }, [router.isReady, userId]);
 
   return (
-    <div className='flex h-full flex-col p-4'>
+    <div className='flex h-full flex-col px-4 pb-4'>
       <div className='m-2 flex items-center justify-between'>
         <Link href='/' className='relative left-[-30px] h-[50px] w-[120px]'>
           <Image src='/logo.png' alt='운세미로' fill className='object-cover' />
@@ -101,7 +101,7 @@ export function Sidebar({ projects, onProjectDeleted }: SidebarProps) {
       >
         <Plus className='mr-2 h-4 w-4' /> 새로운 타로 상담
       </Button>
-      <div className='flex-1 overflow-y-auto'>
+      <div className='min-h-0 overflow-y-auto'>
         <nav className='flex flex-col space-y-2'>
           {projects && projects.length > 0 && (
             <>
