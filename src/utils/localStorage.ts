@@ -71,3 +71,25 @@ export function updateUserInfoInLocalStorage(
     return false;
   }
 }
+
+export function deleteUserInfoFromLocalStorage(userId: number): boolean {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return false;
+
+    const userInfoList: localStorageUserInfo[] = parsed;
+    const filtered = userInfoList.filter((user) => user.userId !== userId);
+
+    // 변경 없으면 false 반환
+    if (filtered.length === userInfoList.length) return false;
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    return true;
+  } catch (e) {
+    console.error('Failed to delete user info from localStorage:', e);
+    return false;
+  }
+}

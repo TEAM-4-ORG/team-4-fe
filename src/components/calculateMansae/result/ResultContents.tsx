@@ -5,6 +5,7 @@ import { GenderType, GroundType, SajuRequest, SkyType } from '@/types/saju';
 import { useEffect, useState } from 'react';
 import InputBirthday from '../input_birthday/input_birthday';
 import { Button } from '@/components/ui/button';
+import FourPillarExplanation from '@/components/PillarExplanation';
 
 interface ResultContentsProps {
   selectedYear: number;
@@ -56,7 +57,7 @@ export default function ResultContents({
   }, [sajuData, showResult]);
 
   return (
-    <>
+    <div className='max-h-96 overflow-y-auto pr-2'>
       {hideResult ? (
         <InputBirthday onAdd={onAdd} />
       ) : (
@@ -83,7 +84,7 @@ export default function ResultContents({
         selectedDay={selectedDay}
         selectedTime={selectedTime}
         setSajuData={setSajuData}
-        hide={hideResult}
+        hide={true}
       />
       {sajuData && (
         <ResultDetail
@@ -95,9 +96,10 @@ export default function ResultContents({
           selectedGender={selectedGender}
           handleSetSajuData={handleSetSajuData}
           setIsSajuDataSettled={setIsSajuDataSettled}
-          hide={hideResult}
+          hide={true}
         />
       )}
-    </>
+      {!hideResult && <FourPillarExplanation />}
+    </div>
   );
 }

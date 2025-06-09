@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Sparkles } from 'lucide-react';
 import { MessageDisplay } from './MessageDisplay'; // 메시지 렌더링 컴포넌트 추가
 import { QuickMenu } from './QuickMenu';
+import { QuestionCategory } from '@/utils/questions';
 
 export interface Message {
   id: string;
@@ -18,7 +19,6 @@ interface SajuChatWindowProps {
   isLoading?: boolean;
   isBotTyping?: boolean;
 }
-
 export function SajuChatWindow({
   initialMessages = [],
   onSendMessage,
@@ -27,39 +27,35 @@ export function SajuChatWindow({
 }: SajuChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
+  const [selectedCategory, setSelectedCategory] =
+    useState<QuestionCategory | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollAreaRef.current) {
-      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-      if (scrollContainer) {
-        scrollContainer.scrollTo({
-          top: scrollContainer.scrollHeight,
-          behavior: 'smooth'
-        });
-      }
-    }
-  }, [messages]);
-
-  const handleSendMessage = () => {
-    if (isLoading || inputMessage.trim() == '') return;
-
-    onSendMessage(inputMessage);
-    setInputMessage('');
-  };
+  const scrollToBottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMessages(initialMessages);
   }, [initialMessages]);
 
+  useEffect(() => {
+    if (scrollToBottomRef.current) {
+      scrollToBottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  const handleSendMessage = () => {
+    if (isLoading || inputMessage.trim() === '') return;
+
+    onSendMessage(inputMessage);
+    setInputMessage('');
+    setSelectedCategory(null); // 메시지 전송 시 카테고리 초기화
+  };
+
   return (
     <div className='flex h-full flex-col bg-white dark:bg-gray-900'>
-      {/* 상단 바 (선택 사항) */}
       <header className='flex items-center justify-between border-b p-4 dark:border-gray-800'>
         <h2 className='text-xl font-semibold'>사주 상담</h2>
       </header>
 
-      {/* 메시지 표시 영역 */}
       <ScrollArea
         className='flex-1 overflow-y-auto p-4'
         viewportRef={scrollAreaRef}
@@ -78,16 +74,17 @@ export function SajuChatWindow({
               isBotTyping={isBotTyping}
             />
           ))}
+          <div ref={scrollToBottomRef} />
         </div>
       </ScrollArea>
 
-      {/* 퀵 메뉴 */}
       <QuickMenu
-        type="saju"
+        type='saju'
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
         onSelectQuestion={(question) => setInputMessage(question)}
       />
 
-      {/* 메시지 입력 영역 */}
       <form
         onSubmit={(e) => {
           e.preventDefault();

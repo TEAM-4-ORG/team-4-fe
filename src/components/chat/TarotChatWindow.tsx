@@ -8,6 +8,7 @@ import { MessageDisplay } from './MessageDisplay'; // 메시지 렌더링 컴포
 import { Dialog } from '@/components/ui/dialog'; // Shadcn Dialog 임포트
 import { TarotSimulatorDialog } from './TarotSimulatorDialog'; // 새롭게 생성할 타로 시뮬레이터 컴포넌트 임포트
 import { QuickMenu } from './QuickMenu';
+import { QuestionCategory } from '@/utils/questions';
 
 export interface Message {
   id: string;
@@ -41,19 +42,17 @@ export function TarotChatWindow({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isTarotDialogOpened, setIsTarotDialogOpened] = useState(false); // 다이얼로그 열림/닫힘 상태
-  const [selectedTarotCards, setSelectedTarotCards] = useState<TarotCard[]>(initialCards); // 초기 카드 정보로 설정
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [selectedTarotCards, setSelectedTarotCards] =
+    useState<TarotCard[]>(initialCards); // 초기 카드 정보로 설정
+  const [selectedCategory, setSelectedCategory] =
+    useState<QuestionCategory | null>(null);
 
-  // 메시지가 추가될 때마다 스크롤을 맨 아래로 이동
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const scrollToBottomRef = useRef<HTMLDivElement>(null); // 추가
+
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-      if (scrollContainer) {
-        scrollContainer.scrollTo({
-          top: scrollContainer.scrollHeight,
-          behavior: 'smooth'
-        });
-      }
+    if (scrollToBottomRef.current) {
+      scrollToBottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
@@ -66,7 +65,11 @@ export function TarotChatWindow({
     if (inputMessage.trim() === '' || isLoading) return;
 
     // 타로 상담이고 아직 카드를 뽑지 않았으며, 기존 선택된 카드도 없는 경우에만 다이얼로그를 엽니다.
-    if (chatType === 'tarot' && selectedTarotCards.length === 0 && initialCards.length === 0) {
+    if (
+      chatType === 'tarot' &&
+      selectedTarotCards.length === 0 &&
+      initialCards.length === 0
+    ) {
       setIsTarotDialogOpened(true);
       return;
     }
@@ -79,10 +82,12 @@ export function TarotChatWindow({
     };
     setMessages((prev) => [...prev, newUserMessage]);
     setInputMessage('');
+    setSelectedCategory(null);
 
     try {
       // 기존에 선택된 카드가 있다면 그대로 사용하고, 없다면 initialCards 사용
-      const cardsToUse = selectedTarotCards.length > 0 ? selectedTarotCards : initialCards;
+      const cardsToUse =
+        selectedTarotCards.length > 0 ? selectedTarotCards : initialCards;
       await onSendMessage(
         inputMessage,
         cardsToUse.length > 0 ? cardsToUse : undefined
@@ -111,6 +116,7 @@ export function TarotChatWindow({
     setMessages((prev) => [...prev, newUserMessage]);
     setInputMessage('');
     // setIsLoading(true);
+    setSelectedCategory(null);
 
     try {
       await onSendMessage(newUserMessage.text, cards);
@@ -167,13 +173,16 @@ export function TarotChatWindow({
               {/* 로딩 스피너 (Tailwind CSS 또는 다른 CSS 프레임워크에 맞게 조정) */}
             </div>
           )}
+          <div ref={scrollToBottomRef} />
         </div>
       </ScrollArea>
 
       {/* 퀵 메뉴 */}
       <QuickMenu
-        type="tarot"
+        type='tarot'
         onSelectQuestion={(question) => setInputMessage(question)}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
       />
 
       {/* 메시지 입력 영역 */}
