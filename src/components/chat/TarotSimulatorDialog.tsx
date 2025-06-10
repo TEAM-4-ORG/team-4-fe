@@ -14,7 +14,7 @@ interface TarotSimulatorDialogProps {
 // Unity의 Application.ExternalCall과 연동됩니다.
 declare global {
   interface Window {
-    ReceiveDrawnCards: (cardData: string) => void; // 함수 이름 변경: Unity에서 호출하는 이름과 일치하도록
+    processUnityDrawnCards: (cardData: string) => void; // 함수 이름 변경
   }
 }
 
@@ -31,11 +31,10 @@ export function TarotSimulatorDialog({ onCardsSelected, onClose }: TarotSimulato
     dataUrl: `/unity-webgl/Build/unity-webgl.data`,
     frameworkUrl: `/unity-webgl/Build/unity-webgl.framework.js`,
     codeUrl: `/unity-webgl/Build/unity-webgl.wasm`,
-    productName: "TarotSimulator",// Unity 프로젝트의 제품 이름
+    productName: "TarotSimulator",
   });
 
   // Unity에서 호출될 함수 정의
-  // 이 함수는 `window.ReceiveDrawnCards`로 Unity에 노출됩니다.
   const handleReceiveDrawnCards = useCallback((cardData: string) => {
     try {
       // Unity에서 List<string>을 JsonUtility.ToJson으로 직렬화하면
@@ -59,13 +58,13 @@ export function TarotSimulatorDialog({ onCardsSelected, onClose }: TarotSimulato
   // 컴포넌트 마운트 시점에 Unity 호출 함수를 window 객체에 등록하고, 언마운트 시점에 제거합니다.
   // 이 부분은 Application.ExternalCall과 연동하기 위해 필요합니다.
   useEffect(() => {
-    // Unity에서 호출할 함수 이름을 `ReceiveDrawnCards`로 명확히 설정합니다.
-    window.ReceiveDrawnCards = handleReceiveDrawnCards;
+    // Unity에서 호출할 함수 이름을 processUnityDrawnCards로 변경
+    window.processUnityDrawnCards = handleReceiveDrawnCards;
 
     return () => {
       // 컴포넌트 언마운트 시 전역 함수 참조를 정리합니다.
-      if (window.ReceiveDrawnCards === handleReceiveDrawnCards) {
-        delete (window as any).ReceiveDrawnCards;
+      if (window.processUnityDrawnCards === handleReceiveDrawnCards) {
+        delete (window as any).processUnityDrawnCards;
       }
     };
   }, [handleReceiveDrawnCards]); // 의존성 배열에 handleReceiveDrawnCards 추가
