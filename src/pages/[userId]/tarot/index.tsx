@@ -206,7 +206,6 @@ export default function TarotChatPage() {
   return (
     <ChatLayout projects={userInfo?.projects}>
       <TarotChatWindow
-        chatType='tarot'
         initialMessages={messages}
         initialCards={initialCards}
         onSendMessage={handleSendMessage}

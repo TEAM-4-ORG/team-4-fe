@@ -24,16 +24,14 @@ export interface TarotCard {
 }
 
 interface TarotChatWindowProps {
-  chatType: 'saju' | 'tarot' | 'init'; // 사주 또는 타로 상담 타입
-  initialMessages?: Message[]; // 초기 메시지 (기록 불러올 때 사용)
-  initialCards?: TarotCard[]; // 초기 카드 정보 (기록 불러올 때 사용)
-  onSendMessage: (message: string, cardInfo?: TarotCard[]) => Promise<void>; // 카드 정보 추가
+  initialMessages?: Message[];
+  initialCards?: TarotCard[];
+  onSendMessage: (message: string, cardInfo?: TarotCard[]) => Promise<void>;
   isLoading?: boolean;
   isBotTyping?: boolean;
 }
 
 export function TarotChatWindow({
-  chatType,
   initialMessages = [],
   initialCards = [],
   onSendMessage,
@@ -66,12 +64,7 @@ export function TarotChatWindow({
   const handleSendMessage = async () => {
     if (inputMessage.trim() === '' || isLoading) return;
 
-    // 타로 상담이고 아직 카드를 뽑지 않았으며, 기존 선택된 카드도 없는 경우에만 다이얼로그를 엽니다.
-    if (
-      chatType === 'tarot' &&
-      selectedTarotCards.length === 0 &&
-      initialCards.length === 0
-    ) {
+    if (selectedTarotCards.length === 0 && initialCards.length === 0) {
       setIsTarotDialogOpened(true);
       return;
     }
@@ -137,9 +130,7 @@ export function TarotChatWindow({
     <div className='flex h-full flex-col bg-white dark:bg-gray-900'>
       {/* 상단 바 (선택 사항) */}
       <header className='flex items-center justify-between border-b p-4 dark:border-gray-800'>
-        <h2 className='text-xl font-semibold'>
-          {chatType === 'saju' ? '사주 상담' : '타로 상담'}
-        </h2>
+        <h2 className='text-xl font-semibold'>타로 상담</h2>
         <Button 
           variant='outline' 
           size='sm'
@@ -155,16 +146,8 @@ export function TarotChatWindow({
         <div className='space-y-4'>
           {messages.length === 0 && !isLoading && (
             <div className='flex h-full flex-col items-center justify-center text-gray-500 dark:text-gray-400'>
-              {chatType === 'saju' ? (
-                <Sparkles className='mb-4 h-16 w-16 text-blue-500' />
-              ) : (
-                <Gem className='mb-4 h-16 w-16 text-purple-500' />
-              )}
-              <p className='text-lg'>
-                {chatType === 'saju'
-                  ? '사주에 대해 무엇이든 물어보세요!'
-                  : '타로 카드를 통해 궁금증을 해결하세요!'}
-              </p>
+              <Gem className='mb-4 h-16 w-16 text-purple-500' />
+              <p className='text-lg'>타로 카드를 통해 궁금증을 해결하세요!</p>
             </div>
           )}
           {messages.map((msg) => (
