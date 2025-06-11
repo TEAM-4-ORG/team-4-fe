@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { TarotCard } from './TarotChatWindow';
 
 interface SelectedCardsDialogProps {
@@ -14,6 +14,9 @@ export function SelectedCardsDialog({ isOpen, onClose, cards }: SelectedCardsDia
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>뽑은 카드</DialogTitle>
+          <DialogDescription>
+            선택하신 타로 카드 목록입니다.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-3 gap-4 p-4">
           {cards.map((card) => (
