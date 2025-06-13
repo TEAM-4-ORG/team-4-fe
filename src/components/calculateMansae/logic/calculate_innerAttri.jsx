@@ -13,8 +13,8 @@ const CalculateInnerAttri = (props) => {
   const thirdAttri = data.sky[ground.innerAttri.charAt(2)];
 
   return (
-    <div className='flex justify-center text-base'>
-      <div className='flex items-center'>
+    <div className='flex justify-center'>
+      <div className='flex flex-col items-center'>
         <span className={`text-${firstAttri.color}-500`}>
           {firstAttri.code}
         </span>
@@ -26,7 +26,7 @@ const CalculateInnerAttri = (props) => {
         </span>
       </div>
 
-      <div className='flex items-center'>
+      <div className='flex flex-col items-center'>
         <span className={`text-${secondAttri.color}-500`}>
           {secondAttri.code}
         </span>
@@ -38,7 +38,7 @@ const CalculateInnerAttri = (props) => {
         </span>
       </div>
 
-      <div className='flex items-center'>
+      <div className='flex flex-col items-center'>
         <span className={`text-${thirdAttri.color}-500`}>
           {thirdAttri.code}
         </span>

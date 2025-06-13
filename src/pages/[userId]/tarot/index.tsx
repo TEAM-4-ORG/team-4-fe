@@ -1,13 +1,18 @@
 // pages/tarot/index.tsx
 import { useState, useEffect } from 'react';
 import { ChatLayout } from '@/components/layout/ChatLayout';
-import { TarotChatWindow, Message, TarotCard } from '@/components/chat/TarotChatWindow';
+import {
+  TarotChatWindow,
+  Message,
+  TarotCard,
+} from '@/components/chat/TarotChatWindow';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
 import { useTarotConsult, useSaveTarotCards } from '@/services/tarot';
 import { useNewProject, useProjectInfo } from '@/services/project';
 import { CreateProjectRequest } from '@/services/project/types';
 import { useUserInfo } from '@/services/user';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Consultation {
   consultation_id: number;
@@ -19,11 +24,10 @@ export default function TarotChatPage() {
   const router = useRouter();
   const { userId, chatId } = router.query;
   const [messages, setMessages] = useState<Message[]>([]);
+  const queryClient = useQueryClient();
 
   // fetch sidebar
-  const { data: userInfo } = useUserInfo(Number(userId), {
-    enabled: !!userId,
-  });
+  const { data: userInfo } = useUserInfo(Number(userId));
 
   // chatId 있으면 fetch
   const { data: projectInfo, isSuccess: projectInfoIsSuccess } = useProjectInfo(
@@ -34,18 +38,23 @@ export default function TarotChatPage() {
   );
 
   //사주 응답 요청
-  const { mutateAsync: sendTarotConsult, isPending: isBotTyping } = useTarotConsult(
-    {
+  const { mutateAsync: sendTarotConsult, isPending: isBotTyping } =
+    useTarotConsult({
       onSuccess: (data, variables) => {
         const { project_id } = variables;
         if (!chatId) {
           router.replace(`/${userId}/tarot?chatId=${project_id}`);
         }
       },
-    }
-  );
+    });
 
-  const { mutateAsync: createProject } = useNewProject();
+  const { mutateAsync: createProject } = useNewProject({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['user', 'info'],
+      });
+    },
+  });
   const { mutateAsync: saveTarotCards } = useSaveTarotCards();
 
   useEffect(() => {
@@ -72,7 +81,7 @@ export default function TarotChatPage() {
           tarotCardsArray = projectInfo.result.tarotCards
             .replace(/[\[\]]/g, '')
             .split(',')
-            .map(card => card.trim());
+            .map((card) => card.trim());
         } catch (error) {
           console.error('타로 카드 파싱 에러:', error);
         }
@@ -83,18 +92,20 @@ export default function TarotChatPage() {
         name: card,
       }));
 
-      const messages: Message[] = consultations.flatMap((item: Consultation) => [
-        {
-          id: `${item.consultation_id}_question`,
-          sender: 'user',
-          text: item.question,
-        },
-        {
-          id: `${item.consultation_id}_result`,
-          sender: 'bot',
-          text: item.result,
-        },
-      ]);
+      const messages: Message[] = consultations.flatMap(
+        (item: Consultation) => [
+          {
+            id: `${item.consultation_id}_question`,
+            sender: 'user',
+            text: item.question,
+          },
+          {
+            id: `${item.consultation_id}_result`,
+            sender: 'bot',
+            text: item.result,
+          },
+        ]
+      );
       setMessages(messages);
       setInitialCards(initialCards);
     }
@@ -102,7 +113,10 @@ export default function TarotChatPage() {
 
   const [initialCards, setInitialCards] = useState<TarotCard[]>([]);
 
-  const handleSendMessage = async (userMessage: string, cardInfo?: TarotCard[]) => {
+  const handleSendMessage = async (
+    userMessage: string,
+    cardInfo?: TarotCard[]
+  ) => {
     const timestamp = Date.now().toString();
     const newUserMessage: Message = {
       id: timestamp + '_user',
@@ -117,7 +131,11 @@ export default function TarotChatPage() {
       text: '',
     };
 
-    setMessages((prev: Message[]) => [...prev, newUserMessage, placeHolderBotMessage]);
+    setMessages((prev: Message[]) => [
+      ...prev,
+      newUserMessage,
+      placeHolderBotMessage,
+    ]);
 
     let currentProjectId = chatId;
 
@@ -137,7 +155,7 @@ export default function TarotChatPage() {
         try {
           await saveTarotCards({
             project_id: Number(currentProjectId),
-            cards: cardInfo.map(card => card.name)
+            cards: cardInfo.map((card) => card.name),
           });
         } catch (error) {
           console.error('타로 카드 저장 에러:', error);
@@ -173,9 +191,9 @@ export default function TarotChatPage() {
         prev.map((msg: Message) =>
           msg.id === placeholderBotMessageId
             ? {
-              ...msg,
-              text: '타로 상담 챗봇 응답을 받을 수 없습니다.',
-            }
+                ...msg,
+                text: '타로 상담 챗봇 응답을 받을 수 없습니다.',
+              }
             : msg
         )
       );
@@ -188,7 +206,7 @@ export default function TarotChatPage() {
   return (
     <ChatLayout projects={userInfo?.projects}>
       <TarotChatWindow
-        chatType="tarot"
+        chatType='tarot'
         initialMessages={messages}
         initialCards={initialCards}
         onSendMessage={handleSendMessage}
